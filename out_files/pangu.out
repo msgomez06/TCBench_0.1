@@ -1,0 +1,34 @@
+2023-10-20 13:48:01,286 INFO Writing results to /scratch/lpoulain/panguweather/Testpangu_{step}h.grib.
+2023-10-20 13:48:01,287 INFO Loading pressure fields from CDS
+2023-10-20 13:48:01,568 INFO Welcome to the CDS
+2023-10-20 13:48:01,568 INFO Welcome to the CDS
+2023-10-20 13:48:01,568 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-pressure-levels
+2023-10-20 13:48:01,568 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-pressure-levels
+2023-10-20 13:48:01,851 INFO Request is completed
+2023-10-20 13:48:01,851 INFO Request is completed
+2023-10-20 13:48:01,851 INFO Downloading https://download-0013-clone.copernicus-climate.eu/cache-compute-0013/cache/data0/adaptor.mars.internal-1697802269.3403058-7078-6-db942bea-36eb-41d4-9e38-85628eec36d5.grib to /tmp/34477310/climetlab-lpoulain/cds-retriever-04e22900ddec012774b630e5db5dfed601e3f39c6ed64522a4a81e86fa0036f4.cache.tmp (128.7M)
+2023-10-20 13:48:01,851 INFO Downloading https://download-0013-clone.copernicus-climate.eu/cache-compute-0013/cache/data0/adaptor.mars.internal-1697802269.3403058-7078-6-db942bea-36eb-41d4-9e38-85628eec36d5.grib to /tmp/34477310/climetlab-lpoulain/cds-retriever-04e22900ddec012774b630e5db5dfed601e3f39c6ed64522a4a81e86fa0036f4.cache.tmp (128.7M)
+  0%|          | 0.00/129M [00:00<?, ?B/s]  1%|          | 1.02M/129M [00:00<00:12, 10.4MB/s]  9%|▊         | 11.2M/129M [00:00<00:01, 66.5MB/s] 15%|█▌        | 19.9M/129M [00:00<00:01, 77.5MB/s] 21%|██        | 27.3M/129M [00:00<00:01, 59.4MB/s] 27%|██▋       | 34.6M/129M [00:00<00:02, 46.3MB/s] 34%|███▎      | 43.1M/129M [00:00<00:01, 56.6MB/s] 41%|████      | 52.3M/129M [00:00<00:01, 66.6MB/s] 50%|████▉     | 64.1M/129M [00:01<00:00, 81.5MB/s] 56%|█████▋    | 72.7M/129M [00:01<00:00, 61.2MB/s] 63%|██████▎   | 80.7M/129M [00:01<00:00, 66.1MB/s] 68%|██████▊   | 88.0M/129M [00:01<00:00, 62.3MB/s] 74%|███████▎  | 94.7M/129M [00:01<00:00, 57.5MB/s] 81%|████████▏ | 105M/129M [00:01<00:00, 68.8MB/s]  91%|█████████ | 117M/129M [00:01<00:00, 83.0MB/s] 99%|█████████▉| 128M/129M [00:01<00:00, 91.0MB/s]                                                  2023-10-20 13:48:03,890 INFO Download rate 63.1M/s
+2023-10-20 13:48:03,890 INFO Download rate 63.1M/s
+2023-10-20 13:48:04,844 INFO Loading surface fields from CDS
+2023-10-20 13:48:04,860 INFO Welcome to the CDS
+2023-10-20 13:48:04,860 INFO Welcome to the CDS
+2023-10-20 13:48:04,860 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-single-levels
+2023-10-20 13:48:04,860 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-single-levels
+2023-10-20 13:48:04,954 INFO Request is completed
+2023-10-20 13:48:04,954 INFO Request is completed
+2023-10-20 13:48:04,954 INFO Downloading https://download-0003-clone.copernicus-climate.eu/cache-compute-0003/cache/data9/adaptor.mars.internal-1697802284.1425114-11378-6-67bd3ce6-d95d-4848-b747-5b027a134a10.grib to /tmp/34477310/climetlab-lpoulain/cds-retriever-655dff4505a8549116e857fae3a9b0b2f9caf5d8dc53ad8f1cbf84a98c1850c4.cache.tmp (7.9M)
+2023-10-20 13:48:04,954 INFO Downloading https://download-0003-clone.copernicus-climate.eu/cache-compute-0003/cache/data9/adaptor.mars.internal-1697802284.1425114-11378-6-67bd3ce6-d95d-4848-b747-5b027a134a10.grib to /tmp/34477310/climetlab-lpoulain/cds-retriever-655dff4505a8549116e857fae3a9b0b2f9caf5d8dc53ad8f1cbf84a98c1850c4.cache.tmp (7.9M)
+  0%|          | 0.00/7.92M [00:00<?, ?B/s]  5%|▌         | 416k/7.92M [00:00<00:01, 4.26MB/s]                                                   2023-10-20 13:48:05,226 INFO Download rate 29.1M/s
+2023-10-20 13:48:05,226 INFO Download rate 29.1M/s
+2023-10-20 13:48:06,131 INFO ONNXRuntime providers: ['CUDAExecutionProvider', 'CPUExecutionProvider']
+2023-10-20 13:48:06,132 INFO Using device 'GPU'. The speed of inference depends greatly on the device.
+2023-10-20 13:48:26,624 INFO Loading ../panguweather/pangu_weather_24.onnx: 21 seconds.
+2023-10-20 13:48:36,820 INFO Loading ../panguweather/pangu_weather_6.onnx: 10 seconds.
+2023-10-20 13:48:36,820 INFO Model initialisation: 35 seconds
+2023-10-20 13:48:36,820 INFO Starting inference for 2 steps (30h).
+2023-10-20 13:48:40,372 INFO Done 1 out of 2 in 3 seconds (24h), ETA: 7 seconds.
+2023-10-20 13:48:42,596 INFO Done 2 out of 2 in 2 seconds (30h), ETA: 2 seconds.
+2023-10-20 13:48:42,597 INFO Elapsed: 5 seconds.
+2023-10-20 13:48:42,597 INFO Average: 2 seconds per step.
+2023-10-20 13:48:42,645 INFO Total time: 41 seconds.

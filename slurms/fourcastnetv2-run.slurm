@@ -3,9 +3,9 @@
 # --mail-type ALL 
 # --mail-user louis.poulain-auzeau@unil.ch
 
-#SBATCH --chdir /work/FAC/FGSE/IDYST/tbeucler/default/louis/
+#SBATCH --chdir /work/FAC/FGSE/IDYST/tbeucler/default/louis/TCBench_0.1/
 #SBATCH --job-name 4castv2
-#SBATCH --output /work/FAC/FGSE/IDYST/tbeucler/default/louis/out_files/4castv2.out
+#SBATCH --output /work/FAC/FGSE/IDYST/tbeucler/default/louis/TCBench_0.1/out_files/4castv2.out
 # -- error /work/FAC/FGSE/IDYST/tbeucler/default/louis/repos/2021_TCGraphNet/dev/logs/script_12_err-%j.err
 
 #SBATCH --partition gpu
@@ -23,6 +23,6 @@ module load gcc cuda cudnn
 source activate /work/FAC/FGSE/IDYST/tbeucler/default/louis/ecmwf_venv/
 
 # target_script=/work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/2021_TCGraphNet/dev/percentile_sample_approach.py
-ai-models --download-assets --assets ./fourcastnetv2/ --input cds --date 20180110 --time 0000 --lead-time 24 --path './fourcastnetv2/4castnetv2-{step}h.grib' fourcastnetv2
+ai-models --download-assets --assets ../fourcastnetv2/ --input cds --date 20180110 --time 0000 --lead-time 24 --path './fourcastnetv2/4castnetv2-{step}h.grib' fourcastnetv2
 
 conda deactivate

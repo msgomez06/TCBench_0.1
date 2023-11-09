@@ -25,6 +25,6 @@ source activate /work/FAC/FGSE/IDYST/tbeucler/default/louis/ecmwf_venv/
 # target_script=/work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/2021_TCGraphNet/dev/percentile_sample_approach.py
 
 ai-models --assets ../panguweather/ --input cds --date 20180110 --time 0000 --lead-time 30\
-            --path '/scratch/lpoulain/panguweather/Testpangu_{step}h.grib' panguweather
+            --path '/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/panguweather/Testpangu_{step}h.grib' panguweather
 
 conda deactivate

@@ -1,4 +1,5 @@
-scripts/__pycache__/utils.cpython-310.pyc
-*.pyc
+# pyc files
+**/.pyc
 
+# slurm jobs out files
 out_files/*.out

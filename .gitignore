@@ -1,5 +1,5 @@
 # pyc files
-**/.pyc
+*.pyc
 
 # slurm jobs out files
 out_files/*.out

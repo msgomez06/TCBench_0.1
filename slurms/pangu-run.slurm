@@ -20,6 +20,7 @@
 # clearing modules and loading python
 module purge
 module load gcc cuda cudnn
+eval "$(/dcsrsoft/spack/arolle/v1.0/spack/opt/spack/linux-rhel8-zen2/gcc-10.4.0/miniconda3-4.10.3-gpvric5au5ue2cp2qiiar6vijzx4ibnb/condabin/conda shell.bash hook)"
 source activate /work/FAC/FGSE/IDYST/tbeucler/default/louis/ecmwf_venv/
 
 # target_script=/work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/2021_TCGraphNet/dev/percentile_sample_approach.py

@@ -1,7 +1,7 @@
 # pyc files
 *.pyc
-__init__/*.pyc
-utils/*.pyc
+**/__init__/*.pyc
+**/utils/*.pyc
 
 # slurm jobs out files
 out_files/*.out

@@ -9,9 +9,12 @@ import cartopy.feature as cfeature
 from mpl_toolkits.axes_grid1 import AxesGrid
 from cartopy.mpl.geoaxes import GeoAxes
 
+from scripts.utils import closest_longitude
+
 dict_model_names = {"pangu": "panguweather", "graphcast": "graphcast", "fourcast": "fourcastnetv2"}
 var_wind = {"u": ("uwnd", "uwnd", "var131"), "v": ("vwnd", "vwnd", "var132")}
 var_dict = {"mslp": 0, "wind": 1}
+var_units = {"mslp": "Pa", "wind": "m/s"}
 
 def compare_models(model_names: list, dates: list[int], times: list[int], lead_times: list[int], cmap_mlsp, cmap_wind, var_names, plot_dir, 
                    era5_location="/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ECMWF/ERA5/",
@@ -85,22 +88,26 @@ def compare_models(model_names: list, dates: list[int], times: list[int], lead_t
         pic_name = f"comparison_{'_'.join(model for model in model_names)}_{date}_{time}_{lead_time}h.png"
         col_names = [f"{dict_model_names[model_name]}" for model_name in model_names] + ["ERA5"]
         
-        test_canvas_holder(data, suptitle, pic_name, col_names, plot_names, lat_list.min(), lat_list.max(), lon_list.min(), 
-                            lon_list.max(), cmap_mlsp, cmap_wind, plot_dir, dpi=dpi)
+        canvas_holder(data, suptitle, pic_name, col_names, plot_names, lat_list.min(), lat_list.max(), lon_list.min(), 
+                            lon_list.max(), cmap_mlsp, cmap_wind, plot_dir, dpi=dpi, data_type='xr')
         
         
 def project(lat_min, lat_max, lon_min, lon_max, ax=None):
         if ax is None:
             ax = plt.axes(projection=ccrs.PlateCarree())
-        ax.set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+        ax.set_extent([0, 359.75, -90, 90], crs=ccrs.PlateCarree())
+        #ax.set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
         return ax       
     
     
-def test_canvas_holder(data, suptitle, pic_name, col_titles, var_names, lat_min, lat_max, lon_min, lon_max, cmap_mslp, cmap_wind, 
-                       plot_dir, contrast=False, dpi=400):
+def canvas_holder(data, suptitle, pic_name, col_titles, var_names, lat_min, lat_max, lon_min, lon_max, cmap_mslp, cmap_wind, 
+                plot_dir, contrast=False, dpi=400, data_type='npy', follow_track=False):
     
+    assert data_type in ['npy', 'xr'], "data_type must be 'npy' or 'xr'"
+    
+    suptitle = multiline_label(suptitle, sep=" ")
     samples, channels = len(data), len(data[0])
-    fig=plt.figure(figsize=(8*samples,4*channels), facecolor='white')
+    fig=plt.figure(figsize=(6*samples,3*channels), facecolor='white')
     axes={}
     ims={}
     data_np = np.array(data)
@@ -114,10 +121,16 @@ def test_canvas_holder(data, suptitle, pic_name, col_titles, var_names, lat_min,
             cbar_size="7%",
             label_mode='')
     
+    if not follow_track:
+        lons = [np.arange(lon_min, lon_max+0.25, 0.25) for i in range(channels)]
+        lats = [np.arange(lat_min, lat_max+0.25, 0.25) for i in range(channels)]
+    else:
+        lons = [np.arange(lon_min[i], lon_max[i]+0.25, 0.25) for i in range(channels)]
+        lats = [np.arange(lat_min, lat_max+0.25, 0.25) for i in range(channels)] # always -30/30 for the moment
+        
     for ind in range(samples):
         
         data_plot=data[ind]
-        
         for i, var in enumerate(var_names):
             Var=var[0]
             unit=var[1]
@@ -128,38 +141,57 @@ def test_canvas_holder(data, suptitle, pic_name, col_titles, var_names, lat_min,
                 Var = multiline_label("Wind magnitude", sep=" ")
                 cmap = cmap_wind
             else:
+                Var = multiline_label(Var, sep=" ")
                 cmap = 'coolwarm'
-            axes[Var+str(ind)] = project(lat_min, lat_max, lon_min, lon_max, ax=grid[i*samples+ind])
-
+            axes[Var+str(ind)+"_"+str(i)] = project(lats[i][0], lats[i][-1], lons[i][0], lons[i][-1], ax=grid[i*samples+ind])
             if not contrast:
-                ims[Var+str(ind)] = data_plot[i].plot(ax=axes[Var+str(ind)], 
-                                                    transform=ccrs.PlateCarree(), 
-                                                    cmap=cmap, 
-                                                    add_colorbar=False,
-                                                    alpha=1)
+                if data_type=='xr':
+                    ims[Var+str(ind)+"_"+str(i)] = data_plot[i].plot(ax=axes[Var+str(ind)+"_"+str(i)], 
+                                                        transform=ccrs.PlateCarree(), 
+                                                        cmap=cmap, 
+                                                        add_colorbar=False,
+                                                        alpha=1)
+                else:
+                    ims[Var+str(ind)+"_"+str(i)] = axes[Var+str(ind)+"_"+str(i)].pcolormesh(lons[i],
+                                                                      lats[i],
+                                                                      data_plot[i],
+                                                                      transform=ccrs.PlateCarree(),
+                                                                      cmap=cmap,
+                                                                      alpha=1)
             else :
-                ims[Var+str(ind)] = data_plot[i].plot(ax=axes[Var+str(ind)], 
-                                                    transform=ccrs.PlateCarree(), 
-                                                    cmap=cmap, 
-                                                    add_colorbar=False,
-                                                    alpha=1,
-                                                    vmin=data_np.min(axis=(0,2,3))[i],
-                                                    vmax=data_np.max(axis=(0,2,3))[i])
+                if data_type=='xr':
+                    ims[Var+str(ind)+"_"+str(i)] = data_plot[i].plot(ax=axes[Var+str(ind)+"_"+str(i)], 
+                                                        transform=ccrs.PlateCarree(), 
+                                                        cmap=cmap, 
+                                                        add_colorbar=False,
+                                                        alpha=1,
+                                                        vmin=data_np.min(axis=(0,2,3))[i],
+                                                        vmax=data_np.max(axis=(0,2,3))[i])
+                else:
+                    
+                    ims[Var+str(ind)+"_"+str(i)] = axes[Var+str(ind)+"_"+str(i)].pcolormesh(lons[i], 
+                                                                      lats[i],
+                                                                      data_plot[i],
+                                                                      transform=ccrs.PlateCarree(),
+                                                                      cmap=cmap,
+                                                                      alpha=1,
+                                                                      vmin=data_np.min(axis=(0,2,3))[i],
+                                                                      vmax=data_np.max(axis=(0,2,3))[i])
             
             
-            axes[Var+str(ind)].add_feature(cfeature.COASTLINE.with_scale('110m')) # adding coastline
-            axes[Var+str(ind)].add_feature(cfeature.BORDERS.with_scale('110m')) # adding borders
+            axes[Var+str(ind)+"_"+str(i)].add_feature(cfeature.COASTLINE.with_scale('110m')) # adding coastline
+            #axes[Var+str(ind)+"_"+str(i)].add_feature(cfeature.BORDERS.with_scale('110m')) # adding borders
 
             if i==0:
-                axes[Var+str(ind)].set_title(col_titles[ind], fontsize = 15)#33
+                axes[Var+str(ind)+"_"+str(i)].set_title(col_titles[ind], fontsize = 15)#33
             else:
-                axes[Var+str(ind)].set_title("")
+                axes[Var+str(ind)+"_"+str(i)].set_title("")
             if ind==0:
                 add_unit = ' ('+unit+')' if unit!='' else ""
-                grid.cbar_axes[i].colorbar(ims[Var+str(ind)]).set_label(label=Var + add_unit, size=20)#33
+                grid.cbar_axes[i].colorbar(ims[Var+str(ind)+"_"+str(i)]).set_label(label=Var + add_unit, size=20)#33
                 grid.cbar_axes[i].tick_params(labelsize=12)#32
             
-                    
+    print(axes.keys())                
     fig.subplots_adjust(bottom=0.005, top=0.95, left=0.05, right=0.95)
     st=fig.suptitle(suptitle, fontsize='20')#36
     st.set_y(0.98)
@@ -167,8 +199,54 @@ def test_canvas_holder(data, suptitle, pic_name, col_titles, var_names, lat_min,
     fig.canvas.draw()
     
     #fig.tight_layout()
-    plt.savefig(plot_dir+pic_name, dpi=dpi, bbox_inches='tight')    
-
+    plt.savefig(plot_dir+pic_name, dpi=dpi, bbox_inches='tight')
+    
+    
+    
+def follow_track(model_names, tc_id, lead_time, var_name, cmap_mslp="Blues", cmap_wind='viridis', max_plots=8,
+                 plot_dir="/users/lpoulain/louis/plots/"):
+    
+    assert set(var_name).issubset(["mslp", "wind", "u", "v"]) and len(var_name)==1, "var_name must contain exactly one of ['mslp', 'wind', 'u', 'v']"
+    
+    var_dict = {"mslp": 0, "u": 1, "v": 2}
+    var_idxs = [var_dict[var] for var in var_name] if var_name[0]!="wind" else [1, 2]
+    
+    model_folders = ["panguweather" if model_name=="pangu" else model_name for model_name in model_names]
+    data_paths = [f"/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/{model_folder}/PostProcessing/" for model_folder in model_folders]
+    
+    data = []
+    for model in model_names:
+        data.append([])
+    
+    for i, model in enumerate(model_names):
+        ldts = np.load(data_paths[i] + f"{model}_{tc_id}_msl_u10_v10_deterministic_inp_ldt.npy", mmap_mode="r")
+        
+        lats_lons = np.load(data_paths[i] + f"{model}_{tc_id}_msl_u10_v10_deterministic_inp_coords.npy", mmap_mode="r")
+        
+        cond = ldts==lead_time
+        idxs = np.arange(len(ldts))[cond][15:]
+        lats_start = lats_lons[idxs, 0]
+        lons_start = lats_lons[idxs, 1]
+        
+        inp_field = np.load(data_paths[i] + f"{model}_{tc_id}_msl_u10_v10_deterministic_inp_fields.npy", mmap_mode="r")[idxs[:max_plots]]
+        inp_field = inp_field[:, var_idxs]
+        if len(vars)>=2:
+            inp_field = np.sqrt(inp_field[:,0]**2 + inp_field[:,1]**2)
+        for k in range(max_plots):
+            data[i].append(inp_field[k])
+    
+    lons_center = [closest_longitude(lats_start[i], lons_start[i], np.arange(0, 360, 0.25)) for i in range(max_plots)]
+    min_lat, max_lat = -30.0, 30.0
+    min_lons, max_lons = [l-30 for l in lons_center], [l+30 for l in lons_center]
+    var_names = [(var_name[0], var_units[var_name[0]]) for i in range(max_plots)]
+    
+    suptitle = f"Trajectory of {tc_id} using {lead_time}h previsions - {var_name}"
+    pic_name = f"trajectory_{tc_id}_{lead_time}h_{'_'.join(var for var in var_name)}_{'_'.join(model for model in model_names)}.png"
+    col_titles = [f"{model}" for model in model_names]
+    # refaire un canvas spécifique je pense, mettre origin=bottom dans le canvas
+    canvas_holder(data=data, suptitle=suptitle, pic_name=pic_name, col_titles=col_titles, var_names=var_names, lat_min=min_lat, lat_max=max_lat,
+                  lon_min=min_lons, lon_max=max_lons, cmap_mslp=cmap_mslp, cmap_wind=cmap_wind, plot_dir=plot_dir, contrast=False, data_type='npy',
+                  follow_track=True)
         
         
 def flatten(arg):

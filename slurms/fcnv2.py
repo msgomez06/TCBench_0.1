@@ -3,6 +3,7 @@ import os
 import datetime
 import numpy as np
 
+
 # INPUT ARGUMENTS   
 
 parser = ArgumentParser()
@@ -21,7 +22,7 @@ year, month, day = date[:4], date[4:6], date[6:]
 
 date_start = np.datetime64(f"{year}-{month}-{day}T{str(time).zfill(2)}")
 date_end = np.datetime64(np.datetime64(f"{year}-{month}-{day}T{str(time).zfill(2)}") + np.timedelta64(int(ldt), 'h'), 'h')
-save_path = f"/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/fourcastnetv2/fourcastnetv2_{date_start}_to_{date_end}_ldt_{ldt}_6.nc"
+save_path = f"/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/fourcastnetv2/fourcastnetv2_{date_start}_to_{date_end}_ldt_{ldt}.nc"
 
 # MODEL PATH AND INPUT DATA
 
@@ -39,7 +40,6 @@ from earth2mip.initial_conditions import cds
 import earth2mip.networks.fcnv2_sm as fcnv2_sm
 
 ### ===========================================
-    
 cds_api = os.path.join(os.path.expanduser("/users/lpoulain/louis/"), '.cdsapirc')
 
 
@@ -56,6 +56,7 @@ start_time = datetime.datetime(int(year), int(month), int(day), time)
 # Pangu datasource, this is much simplier since pangu only uses one timestep as an input
 fcnv2_sm_data_source = cds.DataSource(fcnv2_sm_inference_model.in_channel_names)
 
+
 fcnv2_sm_ds = inference_ensemble.run_basic_inference(
     fcnv2_sm_inference_model,
     n=int(ldt)//6, # fcnv2 is at 6 hour dt
@@ -64,3 +65,4 @@ fcnv2_sm_ds = inference_ensemble.run_basic_inference(
 )
 
 fcnv2_sm_ds.to_netcdf(save_path)
+print("Job finished")

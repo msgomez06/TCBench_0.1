@@ -55,7 +55,7 @@ class CNN_TC(nn.Module):
         self.resconv3 = nn.Conv2d(self.conv2.weight.shape[0], 1, kernel_size=ksize3, stride=1, padding=pad3, dilation=dil3)
         self.reshape = nn.Flatten()
         
-        self.final_conv = nn.Conv2d(1, 4, kernel_size=(embedding_size+3, embedding_size), stride=1, padding=0)
+        self.final_conv = nn.Conv2d(1, 5, kernel_size=(embedding_size+3, embedding_size), stride=1, padding=0)
         self.view = self.add_dim
         
         
@@ -92,35 +92,36 @@ class CNN_TC(nn.Module):
         return x.unsqueeze(1).unsqueeze(2)
         
 
-def train(model, train_loader, val_loader, optimizer, criterion, device, epochs=10):
+def train(model, train_loader, val_loader, optimizer, scheduler, criterion, device, epochs=10):
+
     hdisplay_img = display(display_id=True)
     hdisplay_txt = display(display_id=True)
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    fig = plt.figure(figsize=(15,6), facecolor='white')
+    ax = fig.add_subplot(121)
+    ax2 = fig.add_subplot(122)
     line1, = ax.plot(0,0, label='Train loss')
     line2, = ax.plot(0,0, label='Val loss')
-    plt.legend()
+    
+    line3, = ax2.plot(0,0, label='Val Loss - sin(lat)')
+    line4, = ax2.plot(0,0, label='Val Loss - cos(lon)')
+    line5, = ax2.plot(0,0, label='Val Loss - sin(lon)')
+    line6, = ax2.plot(0,0, label='Val Loss - Wind')
+    line7, = ax2.plot(0,0, label='Val Loss - MSL')
+    
+    lines_specific = [line3, line4, line5, line6, line7]
+    ax.legend()
+    ax2.legend()
     plt.close()
-
-    def update(x, y_train, y_val, epoch):
-        line1.set_xdata(x)
-        line1.set_ydata(y_train)
-        line2.set_xdata(x)
-        line2.set_ydata(y_val)
-        #ax.set_yscale('log')
-        fig.canvas.draw()
-        hdisplay_img.update(fig)
-        hdisplay_txt.update(f"Epoch {epoch}")
         
     model.train()
     train_losses = []
     val_losses = []
+    specific_losses = np.empty((epochs, 5))
     with trange(1, epochs + 1, desc='Training', unit='epoch') as t:
         for epoch in t:
             train_loss = 0
             val_loss = 0
-            #start_time = time.time()
+
             with tqdm(train_loader, desc=f'Train epoch {epoch}',
               unit='batch', leave=False) as t1:
                 for batch_idx, (fields, lat, lon, ldt, targets) in enumerate(t1):
@@ -128,13 +129,16 @@ def train(model, train_loader, val_loader, optimizer, criterion, device, epochs=
                                                             ldt.to(device), targets.to(device)
                     optimizer.zero_grad()
                     outputs = model(fields, lat, lon, ldt)
-                    loss = criterion(outputs, targets)
+                    loss = torch.mean(criterion(outputs, targets))
                     loss.backward()
                     optimizer.step()
 
                     train_loss += loss.item()
+            scheduler.step()        
 
             avg_train_loss = train_loss / len(train_loader)
+            
+            val_losses_specific = np.array([0.,0.,0.,0.,0.])
             with torch.no_grad():
                 with tqdm(val_loader, desc=f'Val. epoch {epoch}',
                 unit='batch', leave=False) as t2:
@@ -142,16 +146,26 @@ def train(model, train_loader, val_loader, optimizer, criterion, device, epochs=
                         fields, lat, lon, ldt, targets = fields.to(device), lat.to(device), lon.to(device),\
                                                                 ldt.to(device), targets.to(device)
                         outputs = model(fields, lat, lon, ldt)
-                        loss = criterion(outputs, targets)
+                        loss_no_reduc = criterion(outputs, targets).mean(axis=0)
+                        loss = torch.mean(loss_no_reduc)
                         val_loss += loss.item()
+                        val_losses_specific += loss_no_reduc.cpu().numpy()
+                        
             avg_val_loss = val_loss / len(val_loader)
+            avg_loss_specific = val_losses_specific / len(val_loader)
             if epoch == 1:
-                ax.set_xlim(0,epochs)
+                ax.set_xlim(1,epochs)
                 ax.set_ylim(0,avg_val_loss*1.1)
+                ax2.set_xlim(1,epochs)
+                ax2.set_ylim(0,avg_loss_specific.max()*1.1)
             
             train_losses.append(avg_train_loss)
             val_losses.append(avg_val_loss)
-            update(range(1, len(train_losses)+1), train_losses, val_losses, epoch)
+            specific_losses[epoch-1] = avg_loss_specific
+            
+            UpdateOnTheFly(fig=fig, lines_train_val=[line1, line2], lines_specific=lines_specific,
+                           x=range(1, len(train_losses)+1), y_train=train_losses, y_val=val_losses, 
+                           contrib_specific=specific_losses, epoch=epoch, hdisplay_img=hdisplay_img, hdisplay_txt=hdisplay_txt)
     return np.array(train_losses), np.array(val_losses)
 
 
@@ -169,3 +183,18 @@ def test(model, test_loader, criterion, device):
     avg_test_loss = test_loss / len(test_loader)
     return np.array(avg_test_loss)
 
+
+
+def UpdateOnTheFly(fig, lines_train_val, lines_specific, x, y_train, y_val, contrib_specific, 
+                   epoch, hdisplay_img, hdisplay_txt):
+    assert len(lines_train_val) == 2
+    y_train_val = [y_train, y_val]
+    for i, line in enumerate(lines_train_val):
+        line.set_xdata(x)
+        line.set_ydata(y_train_val[i])
+    for i, line in enumerate(lines_specific):
+        line.set_xdata(x)
+        line.set_ydata(contrib_specific[:epoch, i])
+    fig.canvas.draw()
+    hdisplay_img.update(fig)
+    hdisplay_txt.update(f"Epoch {epoch}")

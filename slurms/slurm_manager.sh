@@ -13,26 +13,27 @@ eval "$(/dcsrsoft/spack/arolle/v1.0/spack/opt/spack/linux-rhel8-zen2/gcc-10.4.0/
 model=$1
 input=$2
 array_len=$(($3 - 1))
+cds_arg=$4
+
 
 model_pangu="panguweather"
 model_graphcast="graphcast"
 model_fcnv2="fourcastnetv2"
-
-
+#-$array_len
 if [[ "$model" == "$model_graphcast" ]] ;
 then
-    echo "graphcast $input"
-    sbatch --array=0-$array_len /users/lpoulain/louis/TCBench_0.1/slurms/graphcast_array.slurm $input
+    echo "graphcast $input" "$cds_arg"
+    sbatch --array=0-$array_len /users/lpoulain/louis/TCBench_0.1/slurms/graphcast_array${cds_arg}.slurm $input
 else 
     if [[ "$model" == "$model_fcnv2" ]] ;
     then
-        echo "fourcastnetv2 $input"
+        echo "fourcastnetv2 $input" "$cds_arg"
         sbatch --array=0-$array_len /users/lpoulain/louis/TCBench_0.1/slurms/fcnv2_array.slurm $input
     else
         if [[ "$model" == "$model_pangu" ]] ;
         then
-            echo "panguweather $input"
-            sbatch --array=0-$array_len /users/lpoulain/louis/TCBench_0.1/slurms/pangu_array.slurm $input
+            echo "panguweather $input" "$cds_arg"
+            sbatch --array=0-$array_len /users/lpoulain/louis/TCBench_0.1/slurms/pangu_array${cds_arg}.slurm $input
         else
             echo "model $model not recognized. Valid choices are $model_pangu, $model_graphcast and $model_fcnv2."
         fi

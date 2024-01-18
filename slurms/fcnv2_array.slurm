@@ -13,13 +13,12 @@
 #SBATCH --ntasks 1 
 #SBATCH --cpus-per-task 8
 #SBATCH --mem 64G 
-#SBATCH --time 05:00:00 
+#SBATCH --time 06:00:00 
 #SBATCH --export NONE
-# --array=0  # jobs are automatically cancelled, should the task array exceeds the number of input rows
 
 # clearing modules and loading python
 module purge
-module load gcc cuda
+module load gcc cuda proj cdo
 eval "$(/dcsrsoft/spack/arolle/v1.0/spack/opt/spack/linux-rhel8-zen2/gcc-10.4.0/miniconda3-4.10.3-gpvric5au5ue2cp2qiiar6vijzx4ibnb/condabin/conda shell.bash hook)"
 conda deactivate
 conda activate /work/FAC/FGSE/IDYST/tbeucler/default/louis/e2mip_venv/
@@ -42,8 +41,7 @@ lead_time=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}'
 if [[ -n "$time" ]] # -n tests if the string is NOT empty, -z if the string IS empty
 then
         echo "$date $time $lead_time $config" | cat >> ./out_files/fcnv2_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
-        python3 slurms/fcnv2.py --date "$date" --time "$time" --ldt "$lead_time"
-        rm -rf /users/lpoulain/.cache/earth2mip/cds/
+        python3 slurms/fcnv2.py --date "$date" --time "$time" --ldt "$lead_time" 
 else
         
         echo "removed ${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID} ($date $time $lead_time $config)" | cat >> ./out_files/removed_jobs.txt
@@ -51,4 +49,5 @@ else
         rm ./out_files/fcnv2_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
 fi
 
+rm -rf /users/lpoulain/.cache/earth2mip/cds/
 conda deactivate

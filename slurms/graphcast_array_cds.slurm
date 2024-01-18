@@ -8,17 +8,16 @@
 #SBATCH --output /work/FAC/FGSE/IDYST/tbeucler/default/louis/TCBench_0.1/out_files/graphcast_multiple_%A_%a.out
 
 #SBATCH --partition cpu
-# --gres=gpu:1
-#SBATCH --gres-flags enforce-binding
 #SBATCH --ntasks 1 
-#SBATCH --cpus-per-task 16
+#SBATCH --cpus-per-task 8
 #SBATCH --mem 256G 
-#SBATCH --time 05:00:00 
+#SBATCH --time 72:00:00 
 #SBATCH --export NONE
+# --array=0-50
 
 # clearing modules and loading python
 module purge
-module load gcc cuda proj cdo
+module load gcc cuda
 eval "$(/dcsrsoft/spack/arolle/v1.0/spack/opt/spack/linux-rhel8-zen2/gcc-10.4.0/miniconda3-4.10.3-gpvric5au5ue2cp2qiiar6vijzx4ibnb/condabin/conda shell.bash hook)"
 conda deactivate
 source /work/FAC/FGSE/IDYST/tbeucler/default/louis/graphcast_venv/bin/activate
@@ -34,9 +33,6 @@ time=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $con
 
 lead_time=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $config)
 
-year=${date:0:4}
-
-month=${date:4:2}
 # Print to a file a message that includes the current $SLURM_ARRAY_TASK_ID, the same name, and the sex of the sample
 # echo "This is array task ${SLURM_ARRAY_TASK_ID}, the date ${date} and the time is ${time}, the lt is ${lead_time}, file=${config}." >> "./output_gphcst.txt"
 
@@ -44,14 +40,12 @@ month=${date:4:2}
 if [[ -n "$time" ]] # -n tests if the string is NOT empty, -z if the string IS empty
 then
         echo "$date $time $lead_time $config" | cat >> ./out_files/graphcast_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
-        ai-models --download-assets --assets ../graphcast/ --date "$date" --time "$time" --lead-time "$lead_time" \
-    --file "/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/ERA5/ERA5_${year}_${month}" --expver 0001 \
-    --path "/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/graphcast/graphcast_d_${date}_t_${time}_{step}h.grib" graphcast
+        ai-models --download-assets --assets ../graphcast/ --input cds --expver 0001 --date "$date" --time "$time" --lead-time "$lead_time" \
+    --path "/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/graphcast/Data_Monika/graphcast_d_${date}_t_${time}_{step}h.grib" graphcast
         
 else
         echo "removed ${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID} ($date $time $lead_time $config)" | cat >> ./out_files/removed_jobs.txt
         scancel ${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}
         rm ./out_files/graphcast_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
 fi
-
-deactivate
+conda deactivate

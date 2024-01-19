@@ -23,7 +23,7 @@ def str2list(li):
 
 parser = ArgumentParser()
 
-parser.add_argument("--seasons", type=str2list, help="input seasons, pass it as a list", default=[2016,2017,2018,2019,2020])
+parser.add_argument("--season", type=str2list, help="input season, pass it as a list", default=[2000])
 parser.add_argument("--models", type=str2list, help="input models, pass it as a list", default=['graphcast'])
 parser.add_argument("--range", help="whether seasons should be interpreted as a range", action="store_true")
 parser.add_argument("--all_tcs", help="whether to use all tcs of the season or one at random per basin", action="store_true")
@@ -39,22 +39,17 @@ if args.range:
     seasons = list(range(int(seasons[0]), int(seasons[-1])+1))
 models = args.models
 
-inputs = write_several_seasons(output_path="/users/lpoulain/louis/TCBench_0.1/input_params/", 
+if not args.all_tcs:
+    inputs = write_several_seasons(output_path="/users/lpoulain/louis/TCBench_0.1/input_params/", 
                       seasons=seasons, step=6, max_lead=168, all_tcs=args.all_tcs,
                       ibtracs_path='/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/ERA5/TC_track_filtered_1980_00_06_12_18.csv')
 
-print(f"Number of tcs before exclusion: {len(inputs)}")
-excluded = open("/users/lpoulain/louis/TCBench_0.1/input_params/excluded.txt", "r").readlines()
-excluded = [excl.strip() for excl in excluded]
-
-tbr = set()
-d = 0
-for input in inputs:
-    if os.path.basename(input) in [os.path.basename(excl) for excl in excluded]:
-        d += 1
-        tbr.add(input)
-        
-inputs = list(set(inputs) - set(tbr))
+else:
+    assert len(seasons)==1, "all_tcs can only be used for one season at a time"
+    
+    key = lambda x: (os.path.basename(x).split("#")[1].split(".")[0])
+    inputs = sorted(glob.glob(f"/users/lpoulain/louis/TCBench_0.1/input_params/{seasons[0]}/input_params_{seasons[0]}_*#*.txt"), key=key)
+    
 inputs_len = [len(open(input).readlines())-1 for input in inputs]
 
 c = {}

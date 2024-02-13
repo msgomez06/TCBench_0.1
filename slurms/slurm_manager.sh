@@ -23,7 +23,7 @@ model_fcnv2="fourcastnetv2"
 if [[ "$model" == "$model_graphcast" ]] ;
 then
     echo "graphcast $input" "$cds_arg"
-    sbatch --array=0-$array_len /users/lpoulain/louis/TCBench_0.1/slurms/graphcast_array${cds_arg}.slurm $input
+    sbatch --array=0-$array_len%4 /users/lpoulain/louis/TCBench_0.1/slurms/graphcast_array${cds_arg}.slurm $input
 else 
     if [[ "$model" == "$model_fcnv2" ]] ;
     then

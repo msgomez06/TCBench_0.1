@@ -19,6 +19,6 @@ args = parser.parse_args()
 
 date, time, lead_time = args.date, args.time, args.lead_time
 
-main(date, time, lead_time)
+print(main(date, time, lead_time), flush=True)
     
 

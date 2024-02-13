@@ -9,9 +9,9 @@
 
 #SBATCH --partition cpu
 #SBATCH --ntasks 1 
-#SBATCH --cpus-per-task 8
-#SBATCH --mem 64G 
-#SBATCH --time 05:00:00 
+#SBATCH --cpus-per-task 1
+#SBATCH --mem 48G 
+#SBATCH --time 01:30:00 
 #SBATCH --export NONE
 
 # clearing modules and loading python
@@ -38,14 +38,19 @@ year=${date:0:4}
 month=${date:4:2}
 
 
-out=$(python3 /users/lpoulain/louis/TCBench_0.1/slurms/dates.py --date "$date" --time "$time" --lead_time "$ldt")
+out=$(python3 /users/lpoulain/louis/TCBench_0.1/slurms/dates.py --date "$date" --time "$time" --lead_time "$lead_time")
+#echo "test this is out: $out" | cat >> ./out_files/pangu_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
 if ! compgen -G "${SAVE_DIR}/pangu_${out}*.nc" > /dev/null; then
 
-    echo "$date $time $lead_time $config" | cat >> ./out_files/pangu_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
+    echo "$date $time $lead_time $config $out" | cat >> ./out_files/pangu_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
     ONNXRUNTIME=onnxruntime ai-models --assets ../panguweather/ --date "$date" --time "$time" --lead-time "$lead_time" \
     --input file --file "/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/ERA5/ERA5_${year}_${month}" \
     --path "/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/panguweather/pangu_d_${date}_t_${time}_{step}h.grib" panguweather
-
+    wait $!
+    echo "Filtering ..." | cat >> ./out_files/pangu_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
+    python3 scripts/utils/filtering.py --params "$out" --model "pangu"
+else
+    rm ./out_files/pangu_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
 fi
 
 conda deactivate

@@ -7,13 +7,14 @@
 #SBATCH --job-name GraphcastMultiple
 #SBATCH --output /work/FAC/FGSE/IDYST/tbeucler/default/louis/TCBench_0.1/out_files/graphcast_multiple_%A_%a.out
 
-#SBATCH --partition cpu
-# --gres=gpu:1
+#SBATCH --partition gpu
+#SBATCH --gres=gpu:1
 #SBATCH --gres-flags enforce-binding
 #SBATCH --ntasks 1 
-#SBATCH --cpus-per-task 16
-#SBATCH --mem 160G 
-#SBATCH --time 05:00:00 
+# --cpus-per-task 4
+#SBATCH --gpus 1
+#SBATCH --mem 64G 
+#SBATCH --time 00:06:00 
 #SBATCH --export NONE
 
 # clearing modules and loading python
@@ -43,15 +44,19 @@ month=${date:4:2}
 
 #if [[ -n "$time" ]] # -n tests if the string is NOT empty, -z if the string IS empty
 
-out=$(python3 /users/lpoulain/louis/TCBench_0.1/slurms/dates.py --date "$date" --time "$time" --lead_time "$ldt")
+out=$(python3 /users/lpoulain/louis/TCBench_0.1/slurms/dates.py --date "$date" --time "$time" --lead_time "$lead_time")
+#echo "test this is out: $out" | cat >> ./out_files/graphcast_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
 if ! compgen -G "${SAVE_DIR}/graphcast_${out}*.nc" > /dev/null; then
 
-        echo "$date $time $lead_time $config" | cat >> ./out_files/graphcast_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
+        echo "$date $time $lead_time $config $out" | cat >> ./out_files/graphcast_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
         ai-models --download-assets --assets ../graphcast/ --date "$date" --time "$time" --lead-time "$lead_time" \
     --file "/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/ERA5/ERA5_${year}_${month}" --expver 0001 \
     --path "${SAVE_DIR}/graphcast_d_${date}_t_${time}_{step}h.grib" graphcast
         wait $!
-        python filtering_job --date "$date" --time "$time" --lead-time "$lead_time" --config "$config"
+        echo "Filtering ..." | cat >> ./out_files/graphcast_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
+        python3 scripts/utils/filtering.py --params "$out" --model "graphcast"
+else
+    rm ./out_files/graphcast_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
 fi
 
 deactivate

@@ -293,7 +293,7 @@ def multiline_label(label, sep=" "):
                     new_l += elmt + sep
                 else:
                     new_l += elmt
-    return new_l        
+    return new_l
 
 
 

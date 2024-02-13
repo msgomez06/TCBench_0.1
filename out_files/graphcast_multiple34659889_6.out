@@ -1,104 +1,0 @@
-2023-10-25 22:20:59,753 INFO Writing results to /scratch/lpoulain/graphcast/graphcast_d_20191123_t_1200_{step}h.grib.
-/work/FAC/FGSE/IDYST/tbeucler/default/louis/graphcast_venv/lib/python3.10/site-packages/gribapi/__init__.py:23: UserWarning: ecCodes 2.31.0 or higher is recommended. You are running version 2.30.0
-  warnings.warn(
-2023-10-25 22:21:00,477 INFO Model description: 
-GraphCast model at 0.25deg resolution, with 13 pressure levels. This model is
-trained on ERA5 data from 1979 to 2017, and fine-tuned on HRES-fc0 data from
-2016 to 2021 and can be causally evaluated on 2022 and later years. This model
-does not take `total_precipitation_6hr` as inputs and can make predictions in an
-operational setting (i.e., initialised from HRES-fc0).
-
-2023-10-25 22:21:00,478 INFO Model license: 
-The model weights are licensed under the Creative Commons
-Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0). You
-may obtain a copy of the License at:
-https://creativecommons.org/licenses/by-nc-sa/4.0/.
-The weights were trained on ERA5 data, see README for attribution statement.
-
-2023-10-25 22:21:00,478 INFO Loading params/GraphCast_operational - ERA5-HRES 1979-2021 - resolution 0.25 - pressure levels 13 - mesh 2to6 - precipitation output only.npz: 0.7 second.
-2023-10-25 22:21:00,478 INFO Building model: 0.7 second.
-2023-10-25 22:21:00,478 INFO Loading surface fields from CDS
-2023-10-25 22:21:01,210 INFO Welcome to the CDS
-2023-10-25 22:21:01,210 INFO Welcome to the CDS
-2023-10-25 22:21:01,210 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-single-levels
-2023-10-25 22:21:01,210 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-single-levels
-2023-10-25 22:21:17,577 INFO Request is completed
-2023-10-25 22:21:17,577 INFO Request is completed
-2023-10-25 22:21:17,577 INFO Downloading https://download-0004-clone.copernicus-climate.eu/cache-compute-0004/cache/data8/adaptor.mars.internal-1698238412.795678-27996-3-fdd01ab2-a53e-4214-9f72-1e3dfa378345.grib to /tmp/34662411/climetlab-lpoulain/cds-retriever-3eae77969a0dd0ebb36a8dc84b2b0b55d554e714b8fe6dd4e80d6b6124e5147e.cache.tmp (15.8M)
-2023-10-25 22:21:17,577 INFO Downloading https://download-0004-clone.copernicus-climate.eu/cache-compute-0004/cache/data8/adaptor.mars.internal-1698238412.795678-27996-3-fdd01ab2-a53e-4214-9f72-1e3dfa378345.grib to /tmp/34662411/climetlab-lpoulain/cds-retriever-3eae77969a0dd0ebb36a8dc84b2b0b55d554e714b8fe6dd4e80d6b6124e5147e.cache.tmp (15.8M)
-  0%|          | 0.00/15.8M [00:00<?, ?B/s] 17%|█▋        | 2.72M/15.8M [00:00<00:00, 28.5MB/s] 61%|██████    | 9.60M/15.8M [00:00<00:00, 54.2MB/s]                                                    2023-10-25 22:21:17,954 INFO Download rate 42M/s
-2023-10-25 22:21:17,954 INFO Download rate 42M/s
-2023-10-25 22:21:18,020 INFO Welcome to the CDS
-2023-10-25 22:21:18,020 INFO Welcome to the CDS
-2023-10-25 22:21:18,020 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-single-levels
-2023-10-25 22:21:18,020 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-single-levels
-2023-10-25 22:21:18,198 INFO Request is completed
-2023-10-25 22:21:18,198 INFO Request is completed
-2023-10-25 22:21:18,199 INFO Downloading https://download-0004-clone.copernicus-climate.eu/cache-compute-0004/cache/data2/adaptor.mars.internal-1698241596.943043-27530-1-f2191903-a99c-446f-875a-19defef2a729.grib to /tmp/34662411/climetlab-lpoulain/cds-retriever-c05eefe897d7b2dd3d8a449ae462ca31188f78816f966e9d02bdec956510a524.cache.tmp (15.8M)
-2023-10-25 22:21:18,199 INFO Downloading https://download-0004-clone.copernicus-climate.eu/cache-compute-0004/cache/data2/adaptor.mars.internal-1698241596.943043-27530-1-f2191903-a99c-446f-875a-19defef2a729.grib to /tmp/34662411/climetlab-lpoulain/cds-retriever-c05eefe897d7b2dd3d8a449ae462ca31188f78816f966e9d02bdec956510a524.cache.tmp (15.8M)
-  0%|          | 0.00/15.8M [00:00<?, ?B/s] 21%|██        | 3.29M/15.8M [00:00<00:00, 34.5MB/s] 63%|██████▎   | 10.1M/15.8M [00:00<00:00, 55.9MB/s] 98%|█████████▊| 15.5M/15.8M [00:00<00:00, 56.4MB/s]                                                    2023-10-25 22:21:18,521 INFO Download rate 49.5M/s
-2023-10-25 22:21:18,521 INFO Download rate 49.5M/s
-2023-10-25 22:21:18,550 INFO Loading pressure fields from CDS
-2023-10-25 22:21:18,569 INFO Welcome to the CDS
-2023-10-25 22:21:18,569 INFO Welcome to the CDS
-2023-10-25 22:21:18,569 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-pressure-levels
-2023-10-25 22:21:18,569 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-pressure-levels
-2023-10-25 22:21:18,717 INFO Request is completed
-2023-10-25 22:21:18,717 INFO Request is completed
-2023-10-25 22:21:18,717 INFO Downloading https://download-0000-clone.copernicus-climate.eu/cache-compute-0000/cache/data9/adaptor.mars.internal-1698243121.3575575-14937-4-4237131a-de96-423e-8058-7143bb75eeae.grib to /tmp/34662411/climetlab-lpoulain/cds-retriever-690ce505250c2413c04ffb3705cf4350a6278e03d1f86c4206c6c5680293e0a5.cache.tmp (154.5M)
-2023-10-25 22:21:18,717 INFO Downloading https://download-0000-clone.copernicus-climate.eu/cache-compute-0000/cache/data9/adaptor.mars.internal-1698243121.3575575-14937-4-4237131a-de96-423e-8058-7143bb75eeae.grib to /tmp/34662411/climetlab-lpoulain/cds-retriever-690ce505250c2413c04ffb3705cf4350a6278e03d1f86c4206c6c5680293e0a5.cache.tmp (154.5M)
-  0%|          | 0.00/154M [00:00<?, ?B/s]  1%|          | 1.44M/154M [00:00<00:10, 14.6MB/s]  5%|▌         | 8.22M/154M [00:00<00:03, 47.4MB/s] 10%|▉         | 14.9M/154M [00:00<00:02, 57.9MB/s] 14%|█▍        | 22.0M/154M [00:00<00:02, 64.1MB/s] 19%|█▉        | 29.0M/154M [00:00<00:01, 67.4MB/s] 23%|██▎       | 36.0M/154M [00:00<00:01, 69.6MB/s] 28%|██▊       | 43.1M/154M [00:00<00:01, 71.1MB/s] 32%|███▏      | 50.2M/154M [00:00<00:01, 72.1MB/s] 37%|███▋      | 57.2M/154M [00:00<00:01, 72.7MB/s] 42%|████▏     | 64.3M/154M [00:01<00:01, 73.0MB/s] 46%|████▌     | 71.3M/154M [00:01<00:01, 73.3MB/s] 51%|█████     | 78.4M/154M [00:01<00:01, 73.6MB/s] 55%|█████▌    | 85.4M/154M [00:01<00:00, 73.7MB/s] 60%|█████▉    | 92.5M/154M [00:01<00:00, 73.6MB/s] 64%|██████▍   | 99.5M/154M [00:01<00:00, 73.8MB/s] 69%|██████▉   | 107M/154M [00:01<00:00, 73.8MB/s]  74%|███████▎  | 114M/154M [00:01<00:00, 73.9MB/s] 78%|███████▊  | 121M/154M [00:01<00:00, 73.1MB/s] 83%|████████▎ | 128M/154M [00:01<00:00, 71.0MB/s] 87%|████████▋ | 134M/154M [00:02<00:00, 69.8MB/s] 91%|█████████▏| 141M/154M [00:02<00:00, 68.9MB/s] 96%|█████████▌| 148M/154M [00:02<00:00, 67.4MB/s]                                                  2023-10-25 22:21:21,154 INFO Download rate 63.4M/s
-2023-10-25 22:21:21,154 INFO Download rate 63.4M/s
-2023-10-25 22:21:21,209 INFO Welcome to the CDS
-2023-10-25 22:21:21,209 INFO Welcome to the CDS
-2023-10-25 22:21:21,209 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-pressure-levels
-2023-10-25 22:21:21,209 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-pressure-levels
-2023-10-25 22:21:21,328 INFO Request is completed
-2023-10-25 22:21:21,328 INFO Request is completed
-2023-10-25 22:21:21,328 INFO Downloading https://download-0014-clone.copernicus-climate.eu/cache-compute-0014/cache/data3/adaptor.mars.internal-1698244358.3821845-1778-2-65c243ae-bbd7-41fa-a4f5-e5d1acbf4c4b.grib to /tmp/34662411/climetlab-lpoulain/cds-retriever-60d6760640831cf143c88d3bc19fa2b5e1fbb6028875282ad90a9afcabcd2b53.cache.tmp (154.5M)
-2023-10-25 22:21:21,328 INFO Downloading https://download-0014-clone.copernicus-climate.eu/cache-compute-0014/cache/data3/adaptor.mars.internal-1698244358.3821845-1778-2-65c243ae-bbd7-41fa-a4f5-e5d1acbf4c4b.grib to /tmp/34662411/climetlab-lpoulain/cds-retriever-60d6760640831cf143c88d3bc19fa2b5e1fbb6028875282ad90a9afcabcd2b53.cache.tmp (154.5M)
-  0%|          | 0.00/154M [00:00<?, ?B/s]  1%|▏         | 1.95M/154M [00:00<00:07, 20.4MB/s]  6%|▌         | 8.79M/154M [00:00<00:03, 50.6MB/s] 10%|█         | 15.6M/154M [00:00<00:02, 60.1MB/s] 15%|█▍        | 22.4M/154M [00:00<00:02, 64.7MB/s] 19%|█▉        | 29.4M/154M [00:00<00:01, 67.8MB/s] 24%|██▎       | 36.3M/154M [00:00<00:01, 69.3MB/s] 28%|██▊       | 43.3M/154M [00:00<00:01, 70.7MB/s] 33%|███▎      | 50.3M/154M [00:00<00:01, 71.4MB/s] 37%|███▋      | 57.2M/154M [00:00<00:01, 71.6MB/s] 41%|████▏     | 64.1M/154M [00:01<00:01, 71.9MB/s] 46%|████▌     | 71.0M/154M [00:01<00:01, 72.0MB/s] 50%|█████     | 77.9M/154M [00:01<00:01, 72.1MB/s] 55%|█████▍    | 84.8M/154M [00:01<00:01, 72.2MB/s] 59%|█████▉    | 91.7M/154M [00:01<00:00, 72.4MB/s] 64%|██████▍   | 98.6M/154M [00:01<00:00, 72.3MB/s] 68%|██████▊   | 106M/154M [00:01<00:00, 72.4MB/s]  73%|███████▎  | 112M/154M [00:01<00:00, 72.3MB/s] 77%|███████▋  | 120M/154M [00:01<00:00, 72.8MB/s] 82%|████████▏ | 126M/154M [00:01<00:00, 72.7MB/s] 86%|████████▋ | 133M/154M [00:02<00:00, 72.6MB/s] 91%|█████████ | 140M/154M [00:02<00:00, 72.6MB/s] 95%|█████████▌| 147M/154M [00:02<00:00, 72.5MB/s]100%|█████████▉| 154M/154M [00:02<00:00, 72.5MB/s]                                                  2023-10-25 22:21:23,728 INFO Download rate 64.4M/s
-2023-10-25 22:21:23,728 INFO Download rate 64.4M/s
-2023-10-25 22:21:34,112 INFO Creating forcing variables: 10 seconds.
-2023-10-25 22:21:37,674 INFO Converting GRIB to xarray: 3 seconds.
-2023-10-25 22:21:38,928 INFO Reindexing: 1 second.
-2023-10-25 22:21:38,955 INFO Creating training data: 38 seconds.
-2023-10-25 22:21:41,386 INFO Extracting input targets: 2 seconds.
-2023-10-25 22:21:41,387 INFO Creating input data (total): 40 seconds.
-2023-10-25 22:21:41,703 INFO Unable to initialize backend 'rocm': NOT_FOUND: Could not find registered platform with name: "rocm". Available platform names are: CUDA Host Interpreter
-2023-10-25 22:21:41,704 INFO Unable to initialize backend 'tpu': module 'jaxlib.xla_extension' has no attribute 'get_tpu_client'
-2023-10-25 22:21:41,704 INFO Unable to initialize backend 'plugin': xla_extension has no attributes named get_plugin_device_client. Compile TensorFlow with //tensorflow/compiler/xla/python:enable_plugin_device set to true (defaults to false) to enable this.
-2023-10-25 22:23:00.731671: E external/xla/xla/service/slow_operation_alarm.cc:65] Constant folding an instruction is taking > 1s:
-
-  %pad.149 = bf16[3114720,8]{1,0} pad(bf16[3114720,4]{1,0} %constant.365, bf16[] %constant.768), padding=0_0x0_4, metadata={op_name="jit(<unnamed wrapped function>)/jit(main)/while/body/remat/mesh2grid_gnn/_embed/mesh2grid_gnn/sequential/encoder_edges_mesh2grid_mlp/linear_0/dot_general[dimension_numbers=(((2,), (0,)), ((), ())) precision=None preferred_element_type=None]" source_file="/work/FAC/FGSE/IDYST/tbeucler/default/louis/graphcast_venv/lib/python3.10/site-packages/haiku/_src/basic.py" source_line=180}
-
-This isn't necessarily a bug; constant-folding is inherently a trade-off between compilation time and speed at runtime. XLA has some guards that attempt to keep constant folding from taking too long, but fundamentally you'll always be able to come up with an input program that takes a long time.
-
-If you'd like to file a bug, run with envvar XLA_FLAGS=--xla_dump_to=/tmp/foo and attach the results.
-2023-10-25 22:23:10.227212: E external/xla/xla/service/slow_operation_alarm.cc:133] The operation took 10.495613441s
-Constant folding an instruction is taking > 1s:
-
-  %pad.149 = bf16[3114720,8]{1,0} pad(bf16[3114720,4]{1,0} %constant.365, bf16[] %constant.768), padding=0_0x0_4, metadata={op_name="jit(<unnamed wrapped function>)/jit(main)/while/body/remat/mesh2grid_gnn/_embed/mesh2grid_gnn/sequential/encoder_edges_mesh2grid_mlp/linear_0/dot_general[dimension_numbers=(((2,), (0,)), ((), ())) precision=None preferred_element_type=None]" source_file="/work/FAC/FGSE/IDYST/tbeucler/default/louis/graphcast_venv/lib/python3.10/site-packages/haiku/_src/basic.py" source_line=180}
-
-This isn't necessarily a bug; constant-folding is inherently a trade-off between compilation time and speed at runtime. XLA has some guards that attempt to keep constant folding from taking too long, but fundamentally you'll always be able to come up with an input program that takes a long time.
-
-If you'd like to file a bug, run with envvar XLA_FLAGS=--xla_dump_to=/tmp/foo and attach the results.
-2023-10-25 22:23:12.629030: E external/xla/xla/service/slow_operation_alarm.cc:65] Constant folding an instruction is taking > 2s:
-
-  %pad.1 = bf16[1618752,8]{1,0} pad(bf16[1618745,4]{1,0} %constant.374, bf16[] %constant.687), padding=0_7x0_4, metadata={op_name="jit(<unnamed wrapped function>)/jit(main)/while/body/remat/grid2mesh_gnn/_embed/grid2mesh_gnn/sequential/encoder_edges_grid2mesh_mlp/linear_0/dot_general[dimension_numbers=(((2,), (0,)), ((), ())) precision=None preferred_element_type=None]" source_file="/work/FAC/FGSE/IDYST/tbeucler/default/louis/graphcast_venv/lib/python3.10/site-packages/haiku/_src/basic.py" source_line=180}
-
-This isn't necessarily a bug; constant-folding is inherently a trade-off between compilation time and speed at runtime. XLA has some guards that attempt to keep constant folding from taking too long, but fundamentally you'll always be able to come up with an input program that takes a long time.
-
-If you'd like to file a bug, run with envvar XLA_FLAGS=--xla_dump_to=/tmp/foo and attach the results.
-2023-10-25 22:23:16.073695: E external/xla/xla/service/slow_operation_alarm.cc:133] The operation took 5.444704783s
-Constant folding an instruction is taking > 2s:
-
-  %pad.1 = bf16[1618752,8]{1,0} pad(bf16[1618745,4]{1,0} %constant.374, bf16[] %constant.687), padding=0_7x0_4, metadata={op_name="jit(<unnamed wrapped function>)/jit(main)/while/body/remat/grid2mesh_gnn/_embed/grid2mesh_gnn/sequential/encoder_edges_grid2mesh_mlp/linear_0/dot_general[dimension_numbers=(((2,), (0,)), ((), ())) precision=None preferred_element_type=None]" source_file="/work/FAC/FGSE/IDYST/tbeucler/default/louis/graphcast_venv/lib/python3.10/site-packages/haiku/_src/basic.py" source_line=180}
-
-This isn't necessarily a bug; constant-folding is inherently a trade-off between compilation time and speed at runtime. XLA has some guards that attempt to keep constant folding from taking too long, but fundamentally you'll always be able to come up with an input program that takes a long time.
-
-If you'd like to file a bug, run with envvar XLA_FLAGS=--xla_dump_to=/tmp/foo and attach the results.
-2023-10-25 22:23:38,423 INFO Doing full rollout prediction in JAX: 1 minute 57 seconds.
-2023-10-25 22:23:38,424 INFO Converting output xarray to GRIB and saving
-2023-10-25 22:24:48,337 INFO Saving output data: 1 minute 9 seconds.
-2023-10-25 22:24:48,374 INFO Total time: 3 minutes 49 seconds.

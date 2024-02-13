@@ -1,56 +1,0 @@
-2023-10-25 23:02:09,736 INFO Writing results to /scratch/lpoulain/panguweather/pangu_d_20191123_t_0000_{step}h.grib.
-2023-10-25 23:02:09,737 INFO Loading pressure fields from CDS
-2023-10-25 23:02:10,023 INFO Welcome to the CDS
-2023-10-25 23:02:10,023 INFO Welcome to the CDS
-2023-10-25 23:02:10,023 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-pressure-levels
-2023-10-25 23:02:10,023 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-pressure-levels
-2023-10-25 23:02:10,195 INFO Request is completed
-2023-10-25 23:02:10,195 INFO Request is completed
-2023-10-25 23:02:10,195 INFO Downloading https://download-0002-clone.copernicus-climate.eu/cache-compute-0002/cache/data4/adaptor.mars.internal-1698228043.2835073-29904-4-5a4e3444-e651-48ed-8c4a-ec43362fe7ec.grib to /tmp/34662445/climetlab-lpoulain/cds-retriever-0376a64ce167aa6d655c9429f5ff643dc09c9f394b68b0d858a52e072a3ad458.cache.tmp (128.7M)
-2023-10-25 23:02:10,195 INFO Downloading https://download-0002-clone.copernicus-climate.eu/cache-compute-0002/cache/data4/adaptor.mars.internal-1698228043.2835073-29904-4-5a4e3444-e651-48ed-8c4a-ec43362fe7ec.grib to /tmp/34662445/climetlab-lpoulain/cds-retriever-0376a64ce167aa6d655c9429f5ff643dc09c9f394b68b0d858a52e072a3ad458.cache.tmp (128.7M)
-  0%|          | 0.00/129M [00:00<?, ?B/s]  0%|          | 445k/129M [00:00<00:30, 4.38MB/s]  6%|▌         | 7.85M/129M [00:00<00:02, 45.0MB/s] 15%|█▍        | 19.3M/129M [00:00<00:01, 78.2MB/s] 23%|██▎       | 29.2M/129M [00:00<00:01, 88.3MB/s] 30%|███       | 39.1M/129M [00:00<00:01, 93.6MB/s] 37%|███▋      | 48.0M/129M [00:00<00:00, 86.7MB/s] 44%|████▍     | 56.4M/129M [00:00<00:01, 72.6MB/s] 50%|████▉     | 63.7M/129M [00:00<00:01, 59.1MB/s] 54%|█████▍    | 69.9M/129M [00:01<00:01, 53.0MB/s] 59%|█████▊    | 75.4M/129M [00:01<00:01, 49.4MB/s] 62%|██████▏   | 80.4M/129M [00:01<00:01, 46.6MB/s] 66%|██████▌   | 85.0M/129M [00:01<00:00, 46.1MB/s] 70%|██████▉   | 89.5M/129M [00:01<00:00, 45.6MB/s] 73%|███████▎  | 93.9M/129M [00:01<00:00, 45.2MB/s] 76%|███████▋  | 98.2M/129M [00:01<00:00, 44.8MB/s] 80%|███████▉  | 103M/129M [00:01<00:00, 45.2MB/s]  83%|████████▎ | 107M/129M [00:02<00:00, 45.0MB/s] 86%|████████▋ | 111M/129M [00:02<00:00, 45.1MB/s] 90%|████████▉ | 116M/129M [00:02<00:00, 44.4MB/s] 93%|█████████▎| 120M/129M [00:02<00:00, 44.3MB/s] 96%|█████████▋| 124M/129M [00:02<00:00, 44.7MB/s]100%|█████████▉| 128M/129M [00:02<00:00, 44.5MB/s]                                                  2023-10-25 23:02:12,888 INFO Download rate 47.8M/s
-2023-10-25 23:02:12,888 INFO Download rate 47.8M/s
-2023-10-25 23:02:13,906 INFO Loading surface fields from CDS
-2023-10-25 23:02:13,922 INFO Welcome to the CDS
-2023-10-25 23:02:13,922 INFO Welcome to the CDS
-2023-10-25 23:02:13,922 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-single-levels
-2023-10-25 23:02:13,922 INFO Sending request to https://cds.climate.copernicus.eu/api/v2/resources/reanalysis-era5-single-levels
-2023-10-25 23:02:14,080 INFO Request is completed
-2023-10-25 23:02:14,080 INFO Request is completed
-2023-10-25 23:02:14,081 INFO Downloading https://download-0021.copernicus-climate.eu/cache-compute-0021/cache/data4/adaptor.mars.internal-1698231733.3272095-1380-11-52987497-2b95-4fda-a63f-d46023950c43.grib to /tmp/34662445/climetlab-lpoulain/cds-retriever-c768f3e072b4cc9e581ebcd648b6207bacef2deae259937fe95c6e10dbeddf5b.cache.tmp (7.9M)
-2023-10-25 23:02:14,081 INFO Downloading https://download-0021.copernicus-climate.eu/cache-compute-0021/cache/data4/adaptor.mars.internal-1698231733.3272095-1380-11-52987497-2b95-4fda-a63f-d46023950c43.grib to /tmp/34662445/climetlab-lpoulain/cds-retriever-c768f3e072b4cc9e581ebcd648b6207bacef2deae259937fe95c6e10dbeddf5b.cache.tmp (7.9M)
-  0%|          | 0.00/7.92M [00:00<?, ?B/s] 15%|█▍        | 1.16M/7.92M [00:00<00:00, 11.8MB/s]                                                    2023-10-25 23:02:14,416 INFO Download rate 25.3M/s
-2023-10-25 23:02:14,416 INFO Download rate 25.3M/s
-2023-10-25 23:02:14,505 INFO ONNXRuntime providers: ['CUDAExecutionProvider', 'CPUExecutionProvider']
-2023-10-25 23:02:14,505 INFO Using device 'GPU'. The speed of inference depends greatly on the device.
-2023-10-25 23:02:23,714 INFO Loading ../panguweather/pangu_weather_24.onnx: 9 seconds.
-2023-10-25 23:02:31,989 INFO Loading ../panguweather/pangu_weather_6.onnx: 8 seconds.
-2023-10-25 23:02:31,989 INFO Model initialisation: 22 seconds
-2023-10-25 23:02:31,989 INFO Starting inference for 6 steps (144h).
-2023-10-25 23:02:35,021 INFO Done 1 out of 6 in 3 seconds (6h), ETA: 18 seconds.
-2023-10-25 23:02:37,191 INFO Done 2 out of 6 in 2 seconds (12h), ETA: 13 seconds.
-2023-10-25 23:02:39,384 INFO Done 3 out of 6 in 2 seconds (18h), ETA: 9 seconds.
-2023-10-25 23:02:41,610 INFO Done 4 out of 6 in 2 seconds (24h), ETA: 7 seconds.
-2023-10-25 23:02:43,792 INFO Done 5 out of 6 in 2 seconds (30h), ETA: 4 seconds.
-2023-10-25 23:02:45,961 INFO Done 6 out of 6 in 2 seconds (36h), ETA: 2 seconds.
-2023-10-25 23:02:48,137 INFO Done 7 out of 6 in 2 seconds (42h), ETA: instantaneous.
-2023-10-25 23:02:50,336 INFO Done 8 out of 6 in 2 seconds (48h), ETA: -2.29333e+24 yoctosecond.
-2023-10-25 23:02:52,499 INFO Done 9 out of 6 in 2 seconds (54h), ETA: -4.55768e+24 yoctosecond.
-2023-10-25 23:02:54,668 INFO Done 10 out of 6 in 2 seconds (60h), ETA: -6.80365e+24 yoctosecond.
-2023-10-25 23:02:56,859 INFO Done 11 out of 6 in 2 seconds (66h), ETA: -9.04361e+24 yoctosecond.
-2023-10-25 23:02:59,029 INFO Done 12 out of 6 in 2 seconds (72h), ETA: -1.12668e+25 yoctosecond.
-2023-10-25 23:03:01,209 INFO Done 13 out of 6 in 2 seconds (78h), ETA: -1.34861e+25 yoctosecond.
-2023-10-25 23:03:03,514 INFO Done 14 out of 6 in 2 seconds (84h), ETA: -1.57624e+25 yoctosecond.
-2023-10-25 23:03:05,819 INFO Done 15 out of 6 in 2 seconds (90h), ETA: -1.80425e+25 yoctosecond.
-2023-10-25 23:03:08,120 INFO Done 16 out of 6 in 2 seconds (96h), ETA: -2.03239e+25 yoctosecond.
-2023-10-25 23:03:10,431 INFO Done 17 out of 6 in 2 seconds (102h), ETA: -2.2613e+25 yoctosecond.
-2023-10-25 23:03:12,768 INFO Done 18 out of 6 in 2 seconds (108h), ETA: -2.49203e+25 yoctosecond.
-2023-10-25 23:03:15,076 INFO Done 19 out of 6 in 2 seconds (114h), ETA: -2.7213e+25 yoctosecond.
-2023-10-25 23:03:17,385 INFO Done 20 out of 6 in 2 seconds (120h), ETA: -2.95072e+25 yoctosecond.
-2023-10-25 23:03:19,723 INFO Done 21 out of 6 in 2 seconds (126h), ETA: -3.18228e+25 yoctosecond.
-2023-10-25 23:03:22,042 INFO Done 22 out of 6 in 2 seconds (132h), ETA: -3.4127e+25 yoctosecond.
-2023-10-25 23:03:24,354 INFO Done 23 out of 6 in 2 seconds (138h), ETA: -3.64281e+25 yoctosecond.
-2023-10-25 23:03:26,699 INFO Done 24 out of 6 in 2 seconds (144h), ETA: -3.87528e+25 yoctosecond.
-2023-10-25 23:03:26,699 INFO Elapsed: 54 seconds.
-2023-10-25 23:03:26,699 INFO Average: 9 seconds per step.
-2023-10-25 23:03:26,747 INFO Total time: 1 minute 17 seconds.

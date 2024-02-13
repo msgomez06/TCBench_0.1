@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-from utils import get_start_date_nc, get_end_date_nc, get_lead_time, get_tc_id_nc
+from main_utils import get_start_date_nc, get_end_date_nc, get_lead_time, get_tc_id_nc
 
 
 def haversine(latp, lonp, lat_list, lon_list, **kwargs):
@@ -90,7 +90,7 @@ def closest_longitude(lat, lon, lon_list, **kwargs):
     return lon_list[min_idx].item()
 
 
-def closest_lat(lat, lon, lat_list, **kwargs):
+def closest_latitutde(lat, lon, lat_list, **kwargs):
 
     lat, lon, lat_list = float(lat), float(lon), np.array(lat_list).astype(float)
     distance_calculator = kwargs.get("distance_calculator", haversine)
@@ -101,12 +101,13 @@ def closest_lat(lat, lon, lat_list, **kwargs):
     return lat_list[min_idx].item()
     
 
-def cut_rectangle(ds: xr.Dataset, df_tracks: pd.DataFrame, tc_id, tropics=True) -> xr.Dataset:
+def cut_rectangle(ds: xr.Dataset, df_tracks: pd.DataFrame, tc_id, date_start, tropics=False) -> xr.Dataset:
     # ds: dataset to cut
     # df_tracks: dataframe containing the tracks
     # tc_id: id of the TC to cut
 
     tc_track = df_tracks[(df_tracks["SID"]==tc_id)]# & (df_tracks["ISO_TIME"]==iso_time)
+    tc_track = tc_track[tc_track["ISO_TIME"].astype("datetime64[ns]")>=date_start]
     start_lat, start_lon = tc_track["LAT"].values[0], float(tc_track["LON"].values[0])
     if float(start_lon) < 0:
         start_lon = float(start_lon)+360
@@ -115,7 +116,7 @@ def cut_rectangle(ds: xr.Dataset, df_tracks: pd.DataFrame, tc_id, tropics=True) 
     
     closest_lon = closest_longitude(start_lat, start_lon, ds[lon_name].values)
     if not tropics:
-        closest_lat = closest_lat(start_lat, closest_lon, ds[lat_name].values)
+        closest_lat = closest_latitutde(start_lat, closest_lon, ds[lat_name].values)
         if ds[lat_name].values[0]>ds[lat_name].values[-1]:
             lats = np.arange(closest_lat+30, closest_lat-30.25, -0.25)
         else:
@@ -127,8 +128,6 @@ def cut_rectangle(ds: xr.Dataset, df_tracks: pd.DataFrame, tc_id, tropics=True) 
             lats = np.arange(-30, 30.25, 0.25)
         
     if lon_name=="lon":
-        #if ds.lat.values[0] < ds.lat.values[-1]:
-        #    ds = ds.reindex(lat=list(reversed(ds.lat.values)))
         if closest_lon-30>0 and closest_lon+30<360:
             ds_new = ds.sel(lat=lats, lon=slice(closest_lon-30, closest_lon+30))
         elif closest_lon-30<0:
@@ -138,8 +137,6 @@ def cut_rectangle(ds: xr.Dataset, df_tracks: pd.DataFrame, tc_id, tropics=True) 
             ds_new = ds.sel(lat=lats, lon=((ds["lon"]>=closest_lon-30) & (ds["lon"]<=360)) | \
                                                     ((ds["lon"]>=0) & (ds["lon"]<=closest_lon+30-360)))
     else:
-        #if ds.latitude.values[0] < ds.latitude.values[-1]:
-        #    ds = ds.reindex(lat=list(reversed(ds.latitude.values)))
         if closest_lon-30>0 and closest_lon+30<360:
             ds_new = ds.sel(latitude=lats, longitude=slice(closest_lon-30, closest_lon+30))
         elif closest_lon-30<0:
@@ -152,7 +149,8 @@ def cut_rectangle(ds: xr.Dataset, df_tracks: pd.DataFrame, tc_id, tropics=True) 
     return ds_new
 
 
-def cut_and_save_rect(ds_folder, models, df_tracks:pd.DataFrame, date_start, date_end, lead_time, tc_id, output_path, l=None, idx=None):
+def cut_and_save_rect(ds_folder, models, df_tracks:pd.DataFrame, date_start, date_end, lead_time, tc_id, output_path, 
+                      l=None, idx=None, tropics=False):
 
     assert set(models).issubset(["pangu", "graphcast", "fourcastnetv2"]), f"models must be in ['pangu', 'graphcast', 'fourcastnetv2']"
     
@@ -161,18 +159,29 @@ def cut_and_save_rect(ds_folder, models, df_tracks:pd.DataFrame, date_start, dat
     for i, model in enumerate(models):
             save_name = output_path + f"{folder_names[model]}/{model}_{date_start}_to_{date_end}_ldt_{lead_time}_{tc_id}_small.nc"
             if not os.path.isfile(save_name):
-                msg = f"{date_start} to {date_end} ({lead_time}h)" + f" - {idx+1}/{l}" if (l is not None and idx is not None) else ""
-                print(msg)
-                ds = xr.load_dataset(ds_folder + f"{folder_names[model]}/{model}_{date_start}_to_{date_end}_ldt_{lead_time}_{tc_id}.nc", 
-                                    engine="netcdf4")
+                msg = f"{date_start} to {date_end} ({lead_time}h)" + f" - {idx+1}/{l}" if (l is not None and idx is not None) else \
+                        f"{date_start} to {date_end} ({lead_time}h)"
+                print(msg, flush=True)
+                path = ds_folder + f"{folder_names[model]}/{model}_{date_start}_to_{date_end}_ldt_{lead_time}.nc"
+                #ds = xr.load_dataset(ds_folder + f"{folder_names[model]}/{model}_{date_start}_to_{date_end}_ldt_{lead_time}_{tc_id}.nc", 
+                #                    engine="netcdf4")
+                ds = xr.load_dataset(path, engine="netcdf4")
                 try:
-                    ds_new = cut_rectangle(ds, df_tracks, tc_id)
-                    ds_new.to_netcdf(save_name, engine="netcdf4")
+                    ds_new = cut_rectangle(ds, df_tracks, tc_id, date_start, tropics=tropics)
+                    # compress data
+                    encoding = {}
+                    encoding_keys = ("_FillValue", "dtype", "scale_factor", "add_offset", "grid_mapping")
+                    for data_var in ds_new.data_vars:
+                        encoding[data_var] = {key: value for key, value in ds_new[data_var].encoding.items() if key in encoding_keys}
+                        #Set compression level. 1 is least compressed, 9 is most.
+                        encoding[data_var].update(zlib=True, complevel=9)
+                    ds_new.to_netcdf(save_name, engine="netcdf4", mode="w", encoding=encoding, compute=True)
                     
-                    del ds, ds_new
                 except KeyError:
-                    del ds
+                    print(f"KeyError for {date_start} to {date_end} ({lead_time}h)", flush=True)
                     continue
+            del ds
+    return path
 
             
 def cut_save_in_series(ds_folder, models, year, output_path, parallel=False, remove=False, remove_waiting=15,
@@ -196,7 +205,7 @@ def cut_save_in_series(ds_folder, models, year, output_path, parallel=False, rem
         if not parallel:
             for i in range(len(params[model])):
                 date_start, date_end, ldt, tc_id, file = params[model][i]
-                cut_and_save_rect(ds_folder, [model], df_tracks, date_start, date_end, ldt, tc_id, output_path, l=l, idx=i)
+                path = cut_and_save_rect(ds_folder, [model], df_tracks, date_start, date_end, ldt, tc_id, output_path, l=l, idx=i)
                 done.append(file)
                 if len(done) == 50:
                     if remove:

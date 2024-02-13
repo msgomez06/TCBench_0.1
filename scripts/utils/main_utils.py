@@ -5,6 +5,7 @@ import glob
 import pandas as pd
 import pickle
 
+
 def remove_consecutive_elements(lst: list, nb_idx:int) -> bool:
     
     if len(lst) == 0:
@@ -30,6 +31,79 @@ def remove_consecutive_elements(lst: list, nb_idx:int) -> bool:
     
     return len(lst) == 0
 
+
+def str2bool(v):
+    return v.lower() in ('true')
+
+
+def str2list(li):
+    if type(li)==list:
+        li2=li
+        return li2
+    elif type(li)==str:
+        if ', ' in li:
+            li2=li[1:-1].split(', ')
+        else:
+            li2=li[1:-1].split(',')
+        return li2
+    
+    else:
+        raise ValueError("li argument must be a string or a list, not '{}'".format(type(li)))
+
+
+def str2intlist(li):
+    if type(li)==list:
+        li2 = [int(p) for p in li]
+        return li2
+    
+    elif type(li)==str:
+        li2 = li[1:-1].split(',')
+        li3 = [int(p) for p in li2]
+        return li3
+    
+    else : 
+        raise ValueError("li argument must be a string or a list, not '{}'".format(type(li)))
+
+
+def multiline_label(label, sep=" ", cutting=2):
+    # to write long labels on several lines
+    new_l = ''
+    s = 0
+    if type(label)==list:
+        s_max = len(''.join(str(l) for l in label))
+        cut = s_max // cutting if s_max > 11 else s_max
+        for lab in label:
+            s += len(lab)
+            if s > cut:
+                if lab != label[-1]:
+                    new_l += '\n'+lab+sep
+                else:
+                    new_l += '\n'+lab
+                s = 0
+            else:
+                if lab != label[-1]:
+                    new_l += lab + sep
+                else:
+                    new_l += lab
+    if type(label)==str:
+        s_max = len(label)+1
+        cut = s_max // cutting if s_max > 11 else s_max
+        elmts = label.split(sep=sep)
+        for elmt in elmts:
+            s += len(elmt)+1 # +1 for the comma
+            if s > cut:
+                if elmt != elmts[-1]:
+                    new_l += '\n'+elmt + sep
+                else:
+                    new_l += '\n'+elmt
+                s = 0
+            else:
+                if elmt != elmts[-1]:
+                    new_l += elmt + sep
+                else:
+                    new_l += elmt
+    return new_l
+   
 
 
 def filter_tracks(path_ibtracs="/work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/alpha_bench/tracks/ibtracs/ibtracs.ALL.list.v04r00.csv", 
@@ -79,6 +153,14 @@ def filter_tracks(path_ibtracs="/work/FAC/FGSE/IDYST/tbeucler/default/milton/rep
             for month in valid_months:
                 df_tmp_month = df_year_tmp[df_year_tmp["ISO_TIME"].apply(get_month)==month]
                 valid_days = df_tmp_month["ISO_TIME"].apply(get_day).unique().tolist()
+                # for graphcast we NEED the fields at -6h, so for each day we need the previous one too
+                new_days = []
+                for valid_day in valid_days:
+                    if str(int(valid_day)-1) not in valid_days and int(valid_day)-1 >= 1:
+                        new_days.append(str(int(valid_day)-1).zfill(2))
+                valid_days.extend(new_days)
+                key = lambda x: int(x)
+                valid_days = sorted(list(set(valid_days)), key=key)
                 
                 if not month in valid_dates[year].keys():
                     valid_dates[year][month] = []
@@ -90,7 +172,7 @@ def filter_tracks(path_ibtracs="/work/FAC/FGSE/IDYST/tbeucler/default/milton/rep
     with open(f'{path_output}valid_dates_{min_year}_{"_".join(hour for hour in hours)}.pkl', 'wb') as f:
         pickle.dump(valid_dates, f)
     
-    df_final.to_csv(f'{path_output}TC_track_filtered_{min_year}_{"_".join(hour for hour in hours)}.csv', index=False)
+    #df_final.to_csv(f'{path_output}TC_track_filtered_{min_year}_{"_".join(hour for hour in hours)}.csv', index=False)
     
        
 def flatten(arg):
@@ -101,106 +183,77 @@ def flatten(arg):
 
 
 
-def max_historical_distance_within_step(df: pd.DataFrame, step: int=6) -> int:
+def max_historical_distance_within_step(step: int=6, mode="deg",
+        df_path:str="/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/ERA5/TC_track_filtered_1980_00_06_12_18.csv") -> int:
     from params_writers import subtract_ibtracs_iso_times
     from cut_region import haversine
+    
+    assert mode in ["km", "deg"], "mode must be either 'km' or 'deg'"
     max_dist = 0
-    max_dists = []
     dists = []
     dists_lats, dists_lons = [], []
+    df = pd.read_csv(df_path, dtype="string", na_filter=False)
     
-    c = 1
-    
-    # reduce the dataframe to when teledetction started
-    df = pd.concat((df.loc[0].to_frame().T,df[1:][df.loc[1:,"SEASON"].astype(int)>1970]), axis=0)
-    
-    tc_ids = df.loc[1:]["SID"].unique()
+    tc_ids = df["SID"].unique()
     
     l = len(tc_ids)
     tc_id_longest = []
     index_longest = []
     
+    c = 1
     
     for tc_id in tc_ids:
         if c == 1 or c % (l//10) == 0:
             print(f"{c}/{l}")
             
         df_tmp = df[df["SID"]==tc_id]
-        if len(df_tmp.index) > 1:
-            lat_init, lon_init, iso_time_init = float(df_tmp["LAT"].values[0]), float(df_tmp["LON"].values[0]), df_tmp["ISO_TIME"].values[0]
-            time_diff = 0.0
-            idx_start = 0
-            idx_next = df_tmp.index[1]
-            # tout à chnager !!!
-            while idx_next != df_tmp.index[-1]:
-                time_diff += subtract_ibtracs_iso_times(iso_time_init, df_tmp.loc[idx_next]["ISO_TIME"])
-                if time_diff <= step:
-                    idx_next += 1
-                else:
-                    latp, lonp = [float(df_tmp.loc[idx_next]["LAT"])], [float(df_tmp.loc[idx_next]["LON"])]
-                    dist = haversine(lat_init, lon_init, latp, lonp).item() * step / time_diff
+        lat_init, lon_init, iso_time_init = float(df_tmp["LAT"].values[0]), float(df_tmp["LON"].values[0]), df_tmp["ISO_TIME"].values[0]
+        time_diff = 0.0
+        idx_start = 0
+        
+        for idx in range(1, len(df_tmp.index)-1):
+            time_diff += subtract_ibtracs_iso_times(iso_time_init, df_tmp.iloc[idx]["ISO_TIME"])
+            
+            if time_diff >= step:
+                latp, lonp = [float(df_tmp["LAT"].values[idx])], [float(df_tmp["LON"].values[idx])]
+                
+                dist = haversine(lat_init, lon_init, latp, lonp).item() * step / time_diff
+                dists.append(dist)
+                if mode=="km":
                     dist_lat = haversine(lat_init, lonp[0], latp, lonp).item() * step / time_diff, 
                     dist_lon = haversine(lat_init, lon_init, [lat_init], lonp).item() * step / time_diff
-                    dists.append(dist)
-                    dists_lats.append(dist_lat)
-                    dists_lons.append(dist_lon)
-                    if dist > max_dist:
-                        max_dist = dist
-                        max_dists.append(max_dist)
-                        tc_id_longest.append(tc_id)
-                        index_longest.append([idx_start, idx_next])
-                        
-                    idx_start += 1
-                    lat_init, lon_init = float(df_tmp["LAT"].values[idx_start]), float(df_tmp["LON"].values[idx_start])
-                    iso_time_init = df_tmp["ISO_TIME"].values[idx_start]
-                    time_diff = 0.0
+                else:
+                    dist_lat = round(np.abs(latp[0] - lat_init), 2)
+                    dist_lon = round(np.abs(lonp[0] - lon_init), 2)
+                dists_lats.append(dist_lat)
+                dists_lons.append(dist_lon)
+                
+                if dist > max_dist:
+                    max_dist = dist
+                    tc_id_longest = tc_id
+                    index_longest = (idx_start, idx)
+                    
+                idx_start += 1
+                lat_init, lon_init = float(df_tmp["LAT"].values[idx_start]), float(df_tmp["LON"].values[idx_start])
+                iso_time_init = df_tmp["ISO_TIME"].values[idx_start]
+                time_diff = 0.0
                 
         c += 1
         
     with open("./max_distances.txt", "a") as f:
-        f.write(f"Max dist {step}h: {max_dist}km (TC {tc_id_longest[-1]}, idx {index_longest[-1]})\n")
-    print(f"Max dist: {max_dist}km (TC {tc_id_longest[-1]}, idx {index_longest[-1]}).")
+        f.write(f"Max dist {step}h: {max_dist}km (TC {tc_id_longest}, idx {index_longest})\n")
+    print(f"Max dists on a {step}h period:\n",\
+        f"Overall dist: {max_dist}km (TC {tc_id_longest}, idx {index_longest}).\n",\
+        f"Max lon dist: {np.max(dists_lons)}{mode}\n",\
+        f"Max lat dist: {np.max(dists_lats)}{mode}")
     
-    np.save(f"./{step}h_maxs.npy", np.array(max_dists))
     np.save(f"./{step}h_idxs.npy", np.array(index_longest))
     np.save(f"./{step}h_tc_ids.npy", np.array(tc_id_longest))
     np.save(f"./{step}h_dists.npy", np.array(dists))
-    np.save(f"./{step}h_dists_lats.npy", np.array(dists_lats))
-    np.save(f"./{step}h_dists_lons.npy", np.array(dists_lons))
+    np.save(f"./{step}h_dists_lats_{mode}.npy", np.array(dists_lats))
+    np.save(f"./{step}h_dists_lons_{mode}.npy", np.array(dists_lons))
     return max_dist
         
-        
-            
-
-
-
-        
-
-
-                    
-            
-        
-def combine_in_series(output_path, model_name, remove_old=False, start_in="",
-                      ibtracs_path="/work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/alpha_bench/tracks/ibtracs/ibtracs.ALL.list.v04r00.csv"):
-    
-    model_folder = "panguweather" if model_name=="pangu" else model_name
-    key = lambda x: (get_date_time(x), get_lead_time(x))
-    
-    predictions_list = sorted(glob.glob(output_path + f"{model_folder}/{model_name}_d_*h.grib"), key=key)
-    
-    dates_times = []
-    for pred in predictions_list:
-        date = get_date_time(pred)[:8]
-        time = get_date_time(pred)[-4:]
-        if (date, time) not in dates_times and np.datetime64(date_time_nn_to_netcdf(date, time), 'D') >= np.datetime64(start_in, 'D'):
-            dates_times.append((date, time))
-
-    for date_time in dates_times:
-        date, time = date_time
-        
-        combine_ai_models_pred(output_path, model_name, date, time,
-                                        remove_old=remove_old, ibtracs_path=ibtracs_path)
-                
 
 
 def date_time_nn_to_netcdf(date: str, time:str, ldt:int=0) -> np.datetime64:
@@ -386,4 +439,28 @@ def fast_rename(path, model_name, years):
         subprocess.run(["rm", "-r", *predictions_list])
         idx_list = glob.glob(os.path.dirname(predictions_list[0]) + "/*.idx")
         subprocess.run(["rm", "-r", *idx_list])
+        
+        
+        
+    def combine_in_series(output_path, model_name, remove_old=False, start_in="",
+                      ibtracs_path="/work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/alpha_bench/tracks/ibtracs/ibtracs.ALL.list.v04r00.csv"):
+    
+    model_folder = "panguweather" if model_name=="pangu" else model_name
+    key = lambda x: (get_date_time(x), get_lead_time(x))
+    
+    predictions_list = sorted(glob.glob(output_path + f"{model_folder}/{model_name}_d_*h.grib"), key=key)
+    
+    dates_times = []
+    for pred in predictions_list:
+        date = get_date_time(pred)[:8]
+        time = get_date_time(pred)[-4:]
+        if (date, time) not in dates_times and np.datetime64(date_time_nn_to_netcdf(date, time), 'D') >= np.datetime64(start_in, 'D'):
+            dates_times.append((date, time))
+
+    for date_time in dates_times:
+        date, time = date_time
+        
+        combine_ai_models_pred(output_path, model_name, date, time,
+                                        remove_old=remove_old, ibtracs_path=ibtracs_path)
+                
     """

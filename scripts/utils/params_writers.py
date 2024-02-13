@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import random, os
 
-from utils.utils import date_time_nn_to_netcdf
+from main_utils import date_time_nn_to_netcdf
 
 
 def subtract_ibtracs_iso_times(iso_time1:str, iso_time2:str) -> float:
@@ -161,15 +161,19 @@ def write_one_year(output_path:str, season:int=2000, step:int=6, max_lead:int=16
     
     dates, times, ldts = zip(*dates_times_lead_times)
     dates, times, ldts = list(dates), list(times), list(ldts)
+    if not os.path.isdir(output_path + f"{season}/"):
+        os.mkdir(output_path + f"{season}/")
     for i, fname in enumerate(fnames):
-        with open(fname, "w") as w:
-            col_format = "{:<12}" + "{:<9}" + "{:<5}" + "{:<9}" + "\n"
-            
-            dates_tmp, times_tmp, ldts_tmp = dates[i*300:(i+1)*300], times[i*300:(i+1)*300], ldts[i*300:(i+1)*300]
-            l = len(dates_tmp)
-            data = np.row_stack((["ArrayTaskID", "date", "time", "lead time"],np.column_stack((np.arange(0,l), dates_tmp, times_tmp, ldts_tmp))))
-            for x in data:
-                w.write(col_format.format(*x))
+        if not os.path.isfile(fname):
+            with open(fname, "w") as w:
+                col_format = "{:<12}" + "{:<9}" + "{:<5}" + "{:<9}" + "\n"
+                
+                dates_tmp, times_tmp, ldts_tmp = dates[i*300:(i+1)*300], times[i*300:(i+1)*300], ldts[i*300:(i+1)*300]
+                l = len(dates_tmp)
+                data = np.row_stack((["ArrayTaskID", "date", "time", "lead time"],np.column_stack((np.arange(0,l), dates_tmp, times_tmp, ldts_tmp))))
+                for x in data:
+                    w.write(col_format.format(*x))
+    return fnames
 
 
 ## FOR MONIKA'S PROJECT

@@ -90,7 +90,7 @@ def closest_longitude(lat, lon, lon_list, **kwargs):
     return lon_list[min_idx].item()
 
 
-def closest_latitutde(lat, lon, lat_list, **kwargs):
+def closest_latitude(lat, lon, lat_list, **kwargs):
 
     lat, lon, lat_list = float(lat), float(lon), np.array(lat_list).astype(float)
     distance_calculator = kwargs.get("distance_calculator", haversine)
@@ -116,7 +116,7 @@ def cut_rectangle(ds: xr.Dataset, df_tracks: pd.DataFrame, tc_id, date_start, tr
     
     closest_lon = closest_longitude(start_lat, start_lon, ds[lon_name].values)
     if not tropics:
-        closest_lat = closest_latitutde(start_lat, closest_lon, ds[lat_name].values)
+        closest_lat = closest_latitude(start_lat, closest_lon, ds[lat_name].values)
         if ds[lat_name].values[0]>ds[lat_name].values[-1]:
             lats = np.arange(closest_lat+30, closest_lat-30.25, -0.25)
         else:
@@ -157,30 +157,43 @@ def cut_and_save_rect(ds_folder, models, df_tracks:pd.DataFrame, date_start, dat
     folder_names = {"pangu":"panguweather", "graphcast":"graphcast", "fourcastnetv2":"fourcastnetv2"}
     
     for i, model in enumerate(models):
-            save_name = output_path + f"{folder_names[model]}/{model}_{date_start}_to_{date_end}_ldt_{lead_time}_{tc_id}_small.nc"
-            if not os.path.isfile(save_name):
-                msg = f"{date_start} to {date_end} ({lead_time}h)" + f" - {idx+1}/{l}" if (l is not None and idx is not None) else \
-                        f"{date_start} to {date_end} ({lead_time}h)"
-                print(msg, flush=True)
-                path = ds_folder + f"{folder_names[model]}/{model}_{date_start}_to_{date_end}_ldt_{lead_time}.nc"
-                #ds = xr.load_dataset(ds_folder + f"{folder_names[model]}/{model}_{date_start}_to_{date_end}_ldt_{lead_time}_{tc_id}.nc", 
-                #                    engine="netcdf4")
-                ds = xr.load_dataset(path, engine="netcdf4")
-                try:
-                    ds_new = cut_rectangle(ds, df_tracks, tc_id, date_start, tropics=tropics)
-                    # compress data
-                    encoding = {}
-                    encoding_keys = ("_FillValue", "dtype", "scale_factor", "add_offset", "grid_mapping")
-                    for data_var in ds_new.data_vars:
-                        encoding[data_var] = {key: value for key, value in ds_new[data_var].encoding.items() if key in encoding_keys}
-                        #Set compression level. 1 is least compressed, 9 is most.
-                        encoding[data_var].update(zlib=True, complevel=9)
-                    ds_new.to_netcdf(save_name, engine="netcdf4", mode="w", encoding=encoding, compute=True)
-                    
-                except KeyError:
-                    print(f"KeyError for {date_start} to {date_end} ({lead_time}h)", flush=True)
-                    continue
-            del ds
+        save_name = output_path + f"{folder_names[model]}/{model}_{date_start}_to_{date_end}_ldt_{lead_time}_{tc_id}_small.nc"
+        if not os.path.isfile(save_name):
+            msg = f"{date_start} to {date_end} ({lead_time}h)" + f" - {idx+1}/{l}" if (l is not None and idx is not None) else \
+                    f"{date_start} to {date_end} ({lead_time}h)"
+            print(msg, flush=True)
+            path = ds_folder + f"{folder_names[model]}/{model}_{date_start}_to_{date_end}_ldt_{lead_time}.nc"
+            #ds = xr.load_dataset(ds_folder + f"{folder_names[model]}/{model}_{date_start}_to_{date_end}_ldt_{lead_time}_{tc_id}.nc", 
+            #                    engine="netcdf4")
+            ds = xr.load_dataset(path, engine="netcdf4")
+            try:
+                ds_new = cut_rectangle(ds, df_tracks, tc_id, date_start, tropics=tropics)
+                # compress data
+                encoding = {}
+                for data_var in ds_new.data_vars:
+                    encoding[data_var] = {
+                    "original_shape": ds_new[data_var].shape,
+                    "_FillValue": ds_new[data_var].encoding.get(
+                        "_FillValue", -32767
+                    ),
+                    "dtype": np.int16,
+                    "add_offset": ds_new[data_var].encoding.get(
+                        "add_offset", ds_new[data_var].mean().compute().values
+                    ),
+                    "scale_factor": ds_new[data_var].encoding.get(
+                        "scale_factor",
+                        ds_new[data_var].std().compute().values
+                        / 1000, # save up to mean +- 32 std
+                    ),
+                    # "zlib": True,
+                    # "complevel": 5,
+                    }
+                ds_new.to_netcdf(save_name, engine="netcdf4", mode="w", encoding=encoding, compute=True)
+                
+            except KeyError:
+                print(f"KeyError for {date_start} to {date_end} ({lead_time}h)", flush=True)
+                continue
+        del ds
     return path
 
             

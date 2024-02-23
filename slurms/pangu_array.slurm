@@ -10,7 +10,7 @@
 #SBATCH --partition cpu
 #SBATCH --ntasks 1 
 #SBATCH --cpus-per-task 1
-#SBATCH --mem 48G 
+#SBATCH --mem 32G 
 #SBATCH --time 01:30:00 
 #SBATCH --export NONE
 

@@ -11,8 +11,8 @@
 #SBATCH --gres=gpu:1
 #SBATCH --gres-flags enforce-binding
 #SBATCH --ntasks 1 
-#SBATCH --cpus-per-task 8
-#SBATCH --mem 64G 
+#SBATCH --cpus-per-task 1
+#SBATCH --mem 32G 
 #SBATCH --time 05:00:00 
 #SBATCH --export NONE
 # --array=0-50

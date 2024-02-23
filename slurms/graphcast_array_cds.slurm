@@ -7,13 +7,15 @@
 #SBATCH --job-name GraphcastMultiple
 #SBATCH --output /work/FAC/FGSE/IDYST/tbeucler/default/louis/TCBench_0.1/out_files/graphcast_multiple_%A_%a.out
 
-#SBATCH --partition cpu
+#SBATCH --partition gpu
+#SBATCH --gres=gpu:1
+#SBATCH --gres-flags enforce-binding
 #SBATCH --ntasks 1 
-#SBATCH --cpus-per-task 8
-#SBATCH --mem 256G 
-#SBATCH --time 72:00:00 
+# --cpus-per-task 4
+#SBATCH --gpus 1
+#SBATCH --mem 64G 
+#SBATCH --time 00:06:00 
 #SBATCH --export NONE
-# --array=0-50
 
 # clearing modules and loading python
 module purge

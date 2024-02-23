@@ -9,9 +9,9 @@
 
 #SBATCH --partition cpu
 #SBATCH --ntasks 1 
-#SBATCH --cpus-per-task 8
-#SBATCH --mem 8G 
-#SBATCH --time 72:00:00 
+#SBATCH --cpus-per-task 1
+#SBATCH --mem 32G 
+#SBATCH --time 4:00:00 
 #SBATCH --export NONE
 
 # clearing modules and loading gcc
@@ -34,6 +34,6 @@ IFS=',' read -r -a seasons_array <<< "$seasons"
 # Iterate over the seasons array
 season="[${seasons_array[$SLURM_ARRAY_TASK_ID]}]"
 
-python3 -u scripts/case_studies/cnn_csts.py --model_name $model --seasons $season --pres $pres
+python3 -u scripts/models/cnn_csts.py --model_name $model --seasons $season --pres $pres
 echo "Finished"
 conda deactivate

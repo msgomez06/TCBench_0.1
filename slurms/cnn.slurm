@@ -11,10 +11,10 @@
 #SBATCH --gres=gpu:1
 #SBATCH --gres-flags enforce-binding
 #SBATCH --ntasks 1 
-# --cpus-per-task 4
+#SBATCH --cpus-per-task 4
 #SBATCH --gpus 1
-#SBATCH --mem 16G 
-#SBATCH --time 03:00:00 
+#SBATCH --mem 24G 
+#SBATCH --time 08:00:00 
 #SBATCH --export NONE
 
 # clearing modules and loading python
@@ -38,7 +38,7 @@ MODEL_ARGS=$5
 OPTIM=$6
 SCHED=$7
 
-python3 -u /users/lpoulain/louis/TCBench_0.1/scripts/case_studies/cnn_main.py --data_path="$DATA_PATH" --df_path="$DF_PATH" --save_path="$SAVE_PATH" \
+python3 -u /users/lpoulain/louis/TCBench_0.1/scripts/models/cnn_main.py --data_path="$DATA_PATH" --df_path="$DF_PATH" --save_path="$SAVE_PATH" \
                                                                               --split_ratio="$SPLIT_RATIO" --model="$MODEL" --seasons="$SEASONS" --pres="$PRES" \
                                                                               --model_args="$MODEL_ARGS" --optim="$OPTIM" --sched="$SCHED"
 

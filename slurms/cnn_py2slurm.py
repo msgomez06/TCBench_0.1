@@ -18,6 +18,7 @@ parser.add_argument("--model_args", type=str, default="[lr,0.5,epochs,10]",
 #parser.add_argument("--type", type=str, default="mlp", choices=["mlp", "mlp_normal", "mlp_shash"])
 parser.add_argument("--optim", type=str, default="adam")
 parser.add_argument("--sched", type=str, default="cosine_annealing")
+#parser.add_argument("--cnn_type", type=str, default="cnn", choices=["cnn", "cnn_normal"])
 
 args = parser.parse_args()
 print(args)

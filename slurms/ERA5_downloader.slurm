@@ -1,11 +1,12 @@
 #!/bin/bash -l
 
 # --mail-type ALL 
-# --mail-user louis.poulain-auzeau@unil.ch
+# --mail-user milton.gomez@unil.ch
 
-#SBATCH --chdir /work/FAC/FGSE/IDYST/tbeucler/default/louis/TCBench_0.1/
+#SBATCH --chdir /work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/TCBench_0.1
+# old directory: /work/FAC/FGSE/IDYST/tbeucler/default/louis/TCBench_0.1/
 #SBATCH --job-name era5_downloader
-#SBATCH --output /users/lpoulain/louis/TCBench_0.1/era5_download_%a.txt
+#SBATCH --output /work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/TCBench_0.1/download_logs/era5_download_%a.txt
 
 #SBATCH --partition cpu
 #SBATCH --ntasks 1 
@@ -22,7 +23,7 @@ eval "$(/dcsrsoft/spack/arolle/v1.0/spack/opt/spack/linux-rhel8-zen2/gcc-10.4.0/
 conda deactivate
 conda activate /work/FAC/FGSE/IDYST/tbeucler/default/louis/e2mip_venv/
 
-config=/users/lpoulain/louis/TCBench_0.1/input_params/input_era5_downloader.txt
+config=/work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/TCBench_0.1/input_params/input_era5_downloader.txt
 
 # Extract the date, time and lead time for the current $SLURM_ARRAY_TASK_ID
 min_year=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' $config)

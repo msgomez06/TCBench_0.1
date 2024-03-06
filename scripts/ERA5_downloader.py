@@ -13,7 +13,7 @@ import pickle
 import argparse
 
 folder_path = "/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/AI-milton/ERA5/"
-with open(folder_path + "valid_dates_1980_00_06_12_18.pkl", "rb") as f:
+with open(folder_path + "dates_to_dl_milton.pkl", "rb") as f:
     valid_dates = pickle.load(f)
 
 parser = argparse.ArgumentParser(description="Download ERA5 data")

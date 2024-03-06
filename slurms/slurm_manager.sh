@@ -15,6 +15,7 @@ input=$2
 array_len=$(($3 - 1))
 cds_arg=$4
 
+SCRIPT_DIR="/work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/TCBench_0.1/slurms"
 
 model_pangu="panguweather"
 model_graphcast="graphcast"
@@ -23,17 +24,17 @@ model_fcnv2="fourcastnetv2"
 if [[ "$model" == "$model_graphcast" ]] ;
 then
     echo "graphcast $input" "$cds_arg"
-    sbatch --array=0-$array_len%4 /users/lpoulain/louis/TCBench_0.1/slurms/graphcast_array${cds_arg}.slurm $input
+    sbatch --array=0-$array_len%4 $SCRIPT_DIR/graphcast_array${cds_arg}.slurm $input
 else 
     if [[ "$model" == "$model_fcnv2" ]] ;
     then
         echo "fourcastnetv2 $input" "$cds_arg"
-        sbatch --array=0-$array_len /users/lpoulain/louis/TCBench_0.1/slurms/fcnv2_array.slurm $input
+        sbatch --array=0-$array_len $SCRIPT_DIR/fcnv2_array.slurm $input
     else
         if [[ "$model" == "$model_pangu" ]] ;
         then
             echo "panguweather $input" "$cds_arg"
-            sbatch --array=0-$array_len /users/lpoulain/louis/TCBench_0.1/slurms/pangu_array${cds_arg}.slurm $input
+            sbatch --array=0-$array_len $SCRIPT_DIR/pangu_array${cds_arg}.slurm $input
         else
             echo "model $model not recognized. Valid choices are $model_pangu, $model_graphcast and $model_fcnv2."
         fi

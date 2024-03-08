@@ -34,26 +34,37 @@ df = pd.read_csv(
 
 ds_folder = "/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/AI-milton/"
 
-tc_with_date_start = set(
-    df[df["ISO_TIME"].astype("datetime64[ns]") == date_start]["SID"].unique()
-)
-tc_with_date_end = set(
-    df[df["ISO_TIME"].astype("datetime64[ns]") == date_end]["SID"].unique()
+path = cut_and_save_rect(
+    ds_folder,
+    models=[args.model],
+    df_tracks=None,
+    date_start=date_start,
+    date_end=date_end,
+    lead_time=ldt,
+    tc_id=None,
+    output_path="/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/AI-milton/",
 )
 
-tc_ids = list(tc_with_date_start.intersection(tc_with_date_end))
+# tc_with_date_start = set(
+#     df[df["ISO_TIME"].astype("datetime64[ns]") == date_start]["SID"].unique()
+# )
+# tc_with_date_end = set(
+#     df[df["ISO_TIME"].astype("datetime64[ns]") == date_end]["SID"].unique()
+# )
 
-for tc_id in tc_ids:
-    path = cut_and_save_rect(
-        ds_folder,
-        models=[args.model],
-        df_tracks=df,
-        date_start=date_start,
-        date_end=date_end,
-        lead_time=ldt,
-        tc_id=tc_id,
-        output_path="/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/AI-milton/",
-    )
+# tc_ids = list(tc_with_date_start.intersection(tc_with_date_end))
+
+# for tc_id in tc_ids:
+#     path = cut_and_save_rect(
+#         ds_folder,
+#         models=[args.model],
+#         df_tracks=df,
+#         date_start=date_start,
+#         date_end=date_end,
+#         lead_time=ldt,
+#         tc_id=tc_id,
+#         output_path="/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/AI-milton/",
+#     )
 print("Removing large file", flush=True)
 subprocess.run(["rm", path])
 print("Removed", flush=True)

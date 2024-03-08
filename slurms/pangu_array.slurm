@@ -11,7 +11,7 @@
 #SBATCH --ntasks 1 
 #SBATCH --cpus-per-task 1
 #SBATCH --mem 32G 
-#SBATCH --time 01:30:00 
+#SBATCH --time 02:45:00 
 #SBATCH --export NONE
 
 # clearing modules and loading python
@@ -51,7 +51,7 @@ if ! compgen -G "${SAVE_DIR}/pangu_${out}*.nc" > /dev/null; then
     python3 scripts/utils/filtering.py --params "$out" --model "pangu"
 else
     echo "File already exists"
-    #rm ./out_files/pangu_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
+    rm ./out_files/pangu_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
 fi
 
 conda deactivate

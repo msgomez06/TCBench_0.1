@@ -5,7 +5,7 @@ Created on Fri Dec 08 2023
 
 @author: lpoulain
 """
-
+import os
 import cdsapi
 import numpy as np
 import pandas as pd
@@ -99,8 +99,13 @@ for year in list(valid_dates.keys()):
 
             if not (int(year) == min_year and int(month) <= min_month):
                 target_path = f"{folder_path}ERA5_{year}_{month}_upper.grib"
-                client.retrieve(
-                    name=data_origin, request=data_params, target=target_path
-                )
+
+                if not os.path.isfile(target_path):
+                    print(f"Downloading {year}-{month}")
+                    client.retrieve(
+                        name=data_origin, request=data_params, target=target_path
+                    )
+                else:
+                    print(f"{year}-{month} already downloaded")
 
 print(f"Done.")

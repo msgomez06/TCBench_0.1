@@ -7,7 +7,12 @@ import xarray as xr
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
-from utils.main_utils import get_start_date_nc, get_end_date_nc, get_lead_time, get_tc_id_nc
+from utils.main_utils import (
+    get_start_date_nc,
+    get_end_date_nc,
+    get_lead_time,
+    get_tc_id_nc,
+)
 
 
 def haversine(latp, lonp, lat_list, lon_list, **kwargs):
@@ -205,7 +210,7 @@ def cut_and_save_rect(
     for i, model in enumerate(models):
         save_name = (
             output_path
-            + f"{folder_names[model]}/{model}_{date_start}_to_{date_end}_ldt_{lead_time}_{tc_id}_small.nc"
+            + f"{folder_names[model]}/{model}_{date_start}_to_{date_end}_ldt_{lead_time}_small.nc"
         )
         if not os.path.isfile(save_name):
             msg = (

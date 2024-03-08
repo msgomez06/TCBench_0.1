@@ -14,7 +14,7 @@
 # --cpus-per-task 4
 #SBATCH --gpus 1
 #SBATCH --mem 64G 
-#SBATCH --time 00:06:00 
+#SBATCH --time 00:10:00 
 #SBATCH --export NONE
 
 # clearing modules and loading python

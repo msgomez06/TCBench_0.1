@@ -9,3 +9,6 @@ out_files/*.out
 
 # era5 download logs
 download_logs/*.txt
+
+# input parameters
+input_params/*

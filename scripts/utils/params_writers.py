@@ -272,7 +272,7 @@ def write_one_year(
 
     dates = iso_times.strftime("%Y%m%d").astype(str)
     times = iso_times.strftime("%H%M").astype(str)
-    ldts = [168] * len(df)
+    ldts = [168] * len(iso_times)
 
     print("Output directory: ", output_path + f"{season}/")
 

@@ -4,7 +4,7 @@
 # --mail-user louis.poulain-auzeau@unil.ch
 
 #SBATCH --chdir /work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/TCBench_0.1/
-#SBATCH --job-name PanguMultiple
+#SBATCH --job-name panguMultiple
 #SBATCH --output /work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/TCBench_0.1/out_files/pangu_multiple_%A_%a.out
 
 #SBATCH --partition cpu
@@ -24,7 +24,6 @@ conda activate /work/FAC/FGSE/IDYST/tbeucler/default/louis/ecmwf_venv/
 
 # Specify the path to the config file
 config=$1 #./input_params_2019326S08163.txt
-SAVE_DIR="/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/AI-milton/panguweather"
 ERA5_DIR="/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/ERA5"
 
 # Extract the date, time and lead time for the current $SLURM_ARRAY_TASK_ID
@@ -38,6 +37,12 @@ year=${date:0:4}
 
 month=${date:4:2}
 
+SAVE_DIR="/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/AI-milton/panguweather/$year/"
+
+# if the save directory does not exist, create it
+if [ ! -d "$SAVE_DIR" ]; then
+    mkdir -p $SAVE_DIR
+fi
 
 out=$(python3 /work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/TCBench_0.1/slurms/dates.py --date "$date" --time "$time" --lead_time "$lead_time")
 #echo "test this is out: $out" | cat >> ./out_files/pangu_multiple_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out

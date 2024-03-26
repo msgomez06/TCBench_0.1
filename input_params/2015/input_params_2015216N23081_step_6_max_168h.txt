@@ -1,3 +1,0 @@
-ArrayTaskID date     time lead time
-0           20150804 0300 15       
-1           20150804 0900 9        

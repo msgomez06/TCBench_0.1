@@ -256,11 +256,14 @@ def write_one_year(
     dates_times_lead_times = sorted(list(dates_times_lead_times), key=key)
     print(dates_times_lead_times[:10])
     n = len(dates_times_lead_times)
+
     fnames = [
         output_path
         + f"{season}/input_params_{season}_step_{step}_max_{max_lead}h#{i}.txt"
         for i in range(int(np.ceil(n / 300)))
     ]
+
+    print(f"Number of files to write: {len(fnames)}")
 
     # LOUIS ----------
     # dates, times, ldts = zip(*dates_times_lead_times)
@@ -279,6 +282,7 @@ def write_one_year(
     if not os.path.isdir(output_path + f"{season}/"):
         os.mkdir(output_path + f"{season}/")
 
+    print(f"Number of files to write right before fnames loop: {len(fnames)}")
     for i, fname in enumerate(fnames):
         print(fname)
         if not os.path.isfile(fname):

@@ -65,6 +65,11 @@ parser.add_argument(
     help="path to slurm_manager.sh",
     default="/work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/TCBench_0.1/slurms/slurm_manager.sh",
 )
+parser.add_argument(
+    "--index",
+    help="index of the job submission",
+    default=None,
+)
 
 
 args = parser.parse_args()
@@ -117,8 +122,9 @@ print(f"Input samples: {inputs[:3]}")
 # (fcn gcp, pgw) -> 2000: (0,1,1), 2001: (0,1,1), 2002: (0,1,1), 2003: (0,1,1), 2004: (0,1,1), 2005: (0,1,1), 2006: (0,1,1)
 #                   2007: (0,1,1), 2008: (0,1,1), 2009: (0,[0,1,2,3,4],1), 2010: (0,0,1), 2011: (0,0,1), 2012: (0,0,1), 2013: (0,0,1), 2014: (0,0,1), 2015: (0,0,[1]), 2016: (0,0,[1])
 #                   2017: (0,0,1), 2018: (0,0,1), 2019: (0,0,1), 2020: (0,0,0), 2021: (0,0,0), 2022: (0,0,0), 2023: (0,0,0)
-k = 4
-inputs = [inputs[k]]
+if args.index:
+    k = int(args.index)
+    inputs = [inputs[k]]
 
 for i, input in enumerate(inputs):
     l = inputs_len[i] if len(inputs) > 1 else inputs_len[k]

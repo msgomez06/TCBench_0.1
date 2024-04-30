@@ -6,6 +6,8 @@ scripts/__pycache__/*.pyc
 
 # slurm jobs out files
 out_files/*.out
+out_files/*.err
+
 
 # era5 download logs
 download_logs/*.txt

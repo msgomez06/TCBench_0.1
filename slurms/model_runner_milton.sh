@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -l
 
 # --mail-type ALL 
 # --mail-user milton.gomez@unil.ch

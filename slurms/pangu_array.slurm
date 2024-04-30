@@ -25,6 +25,7 @@ conda activate /work/FAC/FGSE/IDYST/tbeucler/default/louis/ecmwf_venv/
 # Specify the path to the config file
 config=$1 #./input_params_2019326S08163.txt
 ERA5_DIR="/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/ML_PREDICT/ERA5"
+#ERA5_DIR="/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/AI-milton/ERA5"
 
 # Extract the date, time and lead time for the current $SLURM_ARRAY_TASK_ID
 date=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' $config)

@@ -7,6 +7,8 @@
 # old directory: /work/FAC/FGSE/IDYST/tbeucler/default/louis/TCBench_0.1/
 #SBATCH --job-name era5_downloader
 #SBATCH --output /work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/TCBench_0.1/download_logs/era5_download_%a.txt
+#SBATCH --error /work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/TCBench_0.1/download_logs/era5_download_%a.err
+
 
 #SBATCH --partition cpu
 #SBATCH --ntasks 1 

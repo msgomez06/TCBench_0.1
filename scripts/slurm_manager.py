@@ -85,16 +85,16 @@ slurm_manager = args.slurm
 if args.range:
     seasons = list(range(int(seasons[0]), int(seasons[-1]) + 1))
 models = args.models
-if "fourcastnetv2" in models:
-    models.remove("fourcastnetv2")
-    print("Currently need to find a better way for jobs with fcnv2")
+# if "fourcastnetv2" in models:
+#     models.remove("fourcastnetv2")
+#     print("Currently need to find a better way for jobs with fcnv2")
 
 if not args.all_tcs:
     inputs = write_several_seasons(
         output_path=outpath,
         seasons=seasons,
-        step=6,
-        max_lead=168,
+        step=12,
+        max_lead=240,
         all_tcs=args.all_tcs,
         ibtracs_path=tracks_file,
     )
@@ -105,8 +105,8 @@ else:
     inputs = write_one_year(
         output_path=outpath,
         season=int(seasons[0]),
-        step=6,
-        max_lead=168,
+        step=12,
+        max_lead=240,
         # ibtracs_path=tracks_file,
     )
     # inputs = sorted(glob.glob(f"/users/lpoulain/louis/TCBench_0.1/input_params/{seasons[0]}/input_params_{seasons[0]}_*#*.txt"), key=key)

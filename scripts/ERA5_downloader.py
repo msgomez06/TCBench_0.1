@@ -13,7 +13,7 @@ import pickle
 import argparse
 
 folder_path = "/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/AI-milton/ERA5/"
-with open(folder_path + "dates_to_dl_milton.pkl", "rb") as f:
+with open(folder_path + "dates_to_dl_Monika.pkl", "rb") as f:
     valid_dates = pickle.load(f)
 
 parser = argparse.ArgumentParser(description="Download ERA5 data")
@@ -98,7 +98,7 @@ for year in list(valid_dates.keys()):
             }
 
             if not (int(year) == min_year and int(month) <= min_month):
-                target_path = f"{folder_path}ERA5_{year}_{month}_upper.grib"
+                target_path = f"{folder_path}ERA5_{year}_{month:02d}_upper.grib"
 
                 if not os.path.isfile(target_path):
                     print(f"Downloading {year}-{month}")

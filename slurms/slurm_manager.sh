@@ -29,7 +29,8 @@ else
     if [[ "$model" == "$model_fcnv2" ]] ;
     then
         echo "fourcastnetv2 $input" "$cds_arg"
-        sbatch --array=0-$array_len $SCRIPT_DIR/fcnv2_array.slurm $input
+        # sbatch --array=0-$array_len $SCRIPT_DIR/fcnv2_array.slurm $input
+        sbatch --array=0-$array_len $SCRIPT_DIR/4cast_array.slurm $input
     else
         if [[ "$model" == "$model_pangu" ]] ;
         then

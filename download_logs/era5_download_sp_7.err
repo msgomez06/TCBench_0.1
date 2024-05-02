@@ -1,0 +1,3 @@
+usage: ERA5_downloader_SP.py [-h] [--min_year MIN_YEAR]
+                             [--min_month MIN_MONTH] [--max_years MAX_YEARS]
+ERA5_downloader_SP.py: error: argument --min_year: invalid int value: ''

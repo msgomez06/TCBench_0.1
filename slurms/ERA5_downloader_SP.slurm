@@ -7,6 +7,7 @@
 # old directory: /work/FAC/FGSE/IDYST/tbeucler/default/louis/TCBench_0.1/
 #SBATCH --job-name era5_sp_downloader
 #SBATCH --output /work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/TCBench_0.1/download_logs/era5_download_sp_%a.txt
+#SBATCH --error /work/FAC/FGSE/IDYST/tbeucler/default/milton/repos/TCBench_0.1/download_logs/era5_download_sp_%a.err
 
 #SBATCH --partition cpu
 #SBATCH --ntasks 1 
@@ -30,7 +31,7 @@ min_year=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' 
 
 min_month=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $config)
 
-#echo "Starting ERA5 download (surface) for year $min_year and month $min_month"
-python3 scripts/ERA5_downloader_SP.py --min_year "$min_year" --min_month "$min_month" --max_years 3
+echo "Starting ERA5 download (surface) for year $min_year and month $min_month"
+python3 scripts/ERA5_downloader_SP.py --min_year "$min_year" --min_month "$min_month" --max_years 1
 echo "Finished"
 conda deactivate

@@ -139,12 +139,24 @@ for year in range(1980, 2024):
     dates_to_dl[year] = month_dl
 
 # %%
+## save the dates to download using pickle
+# with open(
+#     "/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/AI-milton/ERA5/"
+#     + "dates_to_dl_milton.pkl",
+#     "wb",
+# ) as f:
+#     pickle.dump(dates_to_dl, f)
+monika_dates = {}
+
+for month, dates in full_dates[2020].items():
+    monika_dates[month] = [str(date) for date in dates]
+
 # save the dates to download using pickle
 with open(
     "/work/FAC/FGSE/IDYST/tbeucler/default/raw_data/AI-milton/ERA5/"
-    + "dates_to_dl_milton.pkl",
+    + "dates_to_dl_Monika.pkl",
     "wb",
 ) as f:
-    pickle.dump(dates_to_dl, f)
+    pickle.dump({2020: monika_dates}, f)
 
 # %%
